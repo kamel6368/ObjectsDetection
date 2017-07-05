@@ -1,7 +1,0 @@
-rm -rf ObjectsDetection
-
-unzip ObjectsDetection.zip
-rm ObjectsDetection.zip
-
-mv Common Agent/Common
-mv Agent ObjectsDetection
