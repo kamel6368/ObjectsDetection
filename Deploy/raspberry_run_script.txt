@@ -1,0 +1,2 @@
+cd ~
+python ObjectsDetection/run.py
