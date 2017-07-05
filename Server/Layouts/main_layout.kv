@@ -1,0 +1,77 @@
+<MainLayout>:
+  BoxLayout:
+    orientation: 'vertical'
+    spacing: 15
+
+    AnchorLayout:
+      anchor_x: 'right'
+      anchor_y: 'center'
+      size_hint: 1, None
+      height: 30
+      BoxLayout:
+        height: 30
+        size_hint: 0.5, None
+        orientation: 'horizontal'
+        Button:
+          id: single_two_images_mode
+          text: 'single_two_images_mode'
+          on_press: root.switch_single_two_images()
+        Button:
+          id: settings
+          text: 'settings'
+
+    BoxLayout:
+      orientation: 'horizontal'
+      spacing: 10
+      BoxLayout:
+        orientation: 'horizontal'
+        id: images_container
+        spacing: 5
+        Image:
+          id: raw_image
+          source: 'Resources/no_image.jpg'
+        Image:
+          id: quantization_image
+          source: 'Resources/no_image.jpg'
+      BoxLayout:
+        orientation: 'vertical'
+        size_hint: 0.3, 1
+        BoxLayout:
+          size_hint: 1, None
+          height: 50
+          orientation: 'horizontal'
+          Button:
+            id: previous_frame
+            text: 'previous_frame'
+          Button:
+            id: next_frame
+            text: 'next_frame'
+        Label:
+          id: console
+          text: 'daf'
+
+    BoxLayout:
+      orientation: 'horizontal'
+      height: 50
+      size_hint: 1, None
+      spacing: 20
+      Button:
+        id: start_stream
+        text: 'start_stream'
+      Button:
+        id: stop_stream
+        text: 'stop_stream'
+      BoxLayout:
+        orientation: 'vertical'
+        Label:
+          text: 'stream_mode'
+        Spinner:
+          id: stream_mode
+          text: 'every_frame'
+          values: ['every frame', 'video']
+      BoxLayout:
+        orientation: 'vertical'
+        Label:
+          text: 'apply_quantization'
+        CheckBox:
+          id: apply_quantization
