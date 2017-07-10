@@ -1,1 +1,3 @@
-print 'no elo'
+from main import Main
+
+Main().run()

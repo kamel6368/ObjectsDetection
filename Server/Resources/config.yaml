@@ -1,9 +1,7 @@
-TCPServer:
-  ip: 127.0.0.1
-  send_port: 2012
-  receive_port: 2013
+TCPConnection:
+  agent_address: 127.0.0.1
+  agent_port: 2357
+  receive_address: 127.0.0.1
+  receive_port: 2356
   buffer_size: 2048
-
-Agent:
-  ip: 127.0.0.1
-  port: 2013
+  socket_timeout: 3.0
