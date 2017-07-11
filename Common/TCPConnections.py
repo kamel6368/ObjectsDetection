@@ -167,10 +167,15 @@ class TCPClient:
     @staticmethod
     def _prepare_message(command, content):
         data = '|' + command + '|' + content
-        content_length = len(data)
-        msg_length = len(str(content_length)) + content_length
-        data = str(msg_length) + data
+        data_length = len(data)
+        size_flag_length = len(str(data_length))
+        total_length = size_flag_length + data_length
+        if len(str(total_length)) > size_flag_length:
+            total_length += 1
+        data = str(total_length) + data
+
         return data
 
-    def close(self):
-        self.socket.close()
+    def disconnect(self):
+        if self.socket is not None:
+            self.socket.close()

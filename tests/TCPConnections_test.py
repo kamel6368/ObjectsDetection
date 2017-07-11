@@ -17,7 +17,7 @@ class TCPClientTest(unittest.TestCase):
         logger_mock = Mock()
         self.tcp_client = TCPClient(server_address, port, socket_timeout, logger_mock)
 
-    def test__prepare_message_should_return_as_expected(self):
+    def test__prepare_message_should_return_as_expected_simple_data(self):
         command = 'COMMAND'
         content = 'ala ma kota'
 
@@ -25,6 +25,35 @@ class TCPClientTest(unittest.TestCase):
         self.assertEqual('22|COMMAND|ala ma kota', data)
         self.assertEqual(22, len(data))
         self.assertEqual(22, int(data.split('|')[0]))
+
+    def test__prepare_message_should_return_as_expected_9_and_10_length(self):
+        command = 'OBJECTS'
+        content = ''
+
+        data = self.tcp_client._prepare_message(command, content)
+        self.assertEqual('11|OBJECTS|', data)
+        self.assertEqual(11, len(data))
+        self.assertEqual(11, int(data.split('|')[0]))
+
+    def test__prepare_message_should_return_as_expected_19_and_20_length(self):
+        command = 'OBJECTS'
+        content = 'ala ma ko'
+
+        data = self.tcp_client._prepare_message(command, content)
+        self.assertEqual('20|OBJECTS|ala ma ko', data)
+        self.assertEqual(20, len(data))
+        self.assertEqual(20, int(data.split('|')[0]))
+
+    def test__prepare_message_should_return_as_expected_98_and_101_length(self):
+        command = 'OBJECTS'
+        content = 'ala ma kota ala ma kota ala ma kota ala ma kota ala ma kota ala ma kota ala ma kota alaxx'
+
+        data = self.tcp_client._prepare_message(command, content)
+
+        result_data = '101|OBJECTS|ala ma kota ala ma kota ala ma kota ala ma kota ala ma kota ala ma kota ala ma kota alaxx'
+        self.assertEqual(result_data, data)
+        self.assertEqual(101, len(data))
+        self.assertEqual(101, int(data.split('|')[0]))
 
 
 class TCPServerTest(unittest.TestCase):
