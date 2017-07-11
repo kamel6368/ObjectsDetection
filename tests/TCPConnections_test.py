@@ -1,4 +1,5 @@
 import unittest
+from mock import Mock
 from Common.TCPConnections import TCPServer, TCPClient
 
 
@@ -10,7 +11,11 @@ class MyTCPServer(TCPServer):
 class TCPClientTest(unittest.TestCase):
 
     def setUp(self):
-        self.tcp_client = TCPClient('xxx', 123)
+        server_address = 'xxx'
+        port = 123
+        socket_timeout = 2
+        logger_mock = Mock()
+        self.tcp_client = TCPClient(server_address, port, socket_timeout, logger_mock)
 
     def test__prepare_message_should_return_as_expected(self):
         command = 'COMMAND'
@@ -28,7 +33,9 @@ class TCPServerTest(unittest.TestCase):
         address = '127.0.0.1'
         port = 1234
         buffer_size = 1024
-        self.tcp_server = MyTCPServer(address, port, buffer_size)
+        socket_timeout = 3
+        logger_mock = Mock()
+        self.tcp_server = MyTCPServer(address, port, buffer_size, socket_timeout, logger_mock)
 
     def test__manage_chunk_read_simple_message(self):
         data = None

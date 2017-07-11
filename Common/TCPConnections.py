@@ -131,14 +131,14 @@ class TCPServer(Thread):
         return message.split('|')[1], message.split('|')[2]
 
 
-class TCPClient(Thread):
+class TCPClient:
+
     def __init__(self, server_address, server_port, socket_timeout, logger):
         self.server_address = server_address
         self.server_port = server_port
         self.socket = None
         self.socket_timeout = socket_timeout
         self.logger = logger
-        Thread.__init__(self)
 
     def connect(self, single_try=False):
         self.socket = socket.socket(socket.AF_INET, socket.SOCK_STREAM)
