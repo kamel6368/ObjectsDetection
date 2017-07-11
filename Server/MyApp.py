@@ -1,10 +1,12 @@
+import tasks
 from kivy.app import App
 from kivy.lang.builder import Builder
 from MainLayout import MainLayout
-from Common.TCPConnections import TCPClient, TCPCommands
+from Common.TCPConnections import TCPClient
 from TCPServer import TCPServer
 from Common.config import config
 from Common.Logger import Logger
+
 
 class MyApp(App):
 
@@ -34,14 +36,10 @@ class MyApp(App):
         agent_port = config('TCPConnection/agent_port')
         self.tcp_client = TCPClient(agent_address, agent_port, socket_timeout, logger)
 
-        self._try_reconnect_to_alive_agent()
+        tasks.try_reconnect_to_alive_agents(self, self.tcp_client)
 
         self.tcp_server.start()
 
     def on_stop(self):
         self.tcp_server.disconnect()
-
-    def _try_reconnect_to_alive_agent(self):
-        self.are_agents_alive_before_startup = self.tcp_client.connect(single_try=True)
-        if self.are_agents_alive_before_startup:
-            self.tcp_client.send(TCPCommands.REMOTE_SERVER_BREAK_DOWN, '')
+        self.tcp_client.disconnect()

@@ -1,11 +1,10 @@
 import cv2
-import thread
+import tasks
 from time import sleep
 from TCPServer import TCPServer
 from Common.config import config
-from Common.TCPConnections import TCPClient, TCPCommands
+from Common.TCPConnections import TCPClient
 from Common.Logger import Logger
-from Common.image_serialization import image_to_string
 
 
 class Main:
@@ -32,7 +31,7 @@ class Main:
         remote_server_port = config('TCPConnection/remote_server_port')
         self.tcp_client = TCPClient(remote_server_address, remote_server_port, socket_timeout, logger)
 
-        self.register()
+        tasks.register(self.tcp_client)
 
         self.tcp_server.start()
 
@@ -42,22 +41,12 @@ class Main:
 
         self.video_capture = cv2.VideoCapture(0)
 
-        self.send_image()
+        image = tasks.take_picture(self.video_capture)
+        tasks.send_image_to_remote_server(self.tcp_client, image)
 
         while not self.exit:
             sleep(1)
         logger.print_msg('Agent stopped')
         logger.print_msg('BYE!')
 
-    def register(self):
-        self.tcp_client.connect()
-        self.tcp_client.send(TCPCommands.REGISTER, '')
 
-    def send_image(self):
-        _, image = self.video_capture.read()
-        content = image_to_string(image)
-        self.tcp_client.send(TCPCommands.IMAGE, content)
-
-    def shutdown(self):
-        self.tcp_server.disconnect()
-        self.exit = True

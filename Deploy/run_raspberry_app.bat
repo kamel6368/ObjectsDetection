@@ -7,5 +7,5 @@ for /f "tokens=1,2 delims==" %%a in (raspberry_params.txt) do (
 	IF "%%a"=="password" ( SET "raspberry_password=%%b" )
 )
 
-plink -ssh %raspberry_user%@%raspberry_ip% -pw %raspberry_password% "cd ~;sudo python ObjectsDetection/run.py"
+plink -ssh %raspberry_user%@%raspberry_ip% -pw %raspberry_password% "cd ~/ObjectsDetection;python run.py"
 pause
