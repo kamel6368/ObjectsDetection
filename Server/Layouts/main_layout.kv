@@ -3,22 +3,42 @@
     orientation: 'vertical'
     spacing: 15
 
-    AnchorLayout:
-      anchor_x: 'right'
-      anchor_y: 'center'
+    RelativeLayout:
       size_hint: 1, None
-      height: 30
-      BoxLayout:
-        height: 30
+      height: 40
+      AnchorLayout:
+        anchor_x: 'left'
+        anchor_y: 'center'
         size_hint: 0.5, None
-        orientation: 'horizontal'
-        Button:
-          id: single_two_images_mode
-          text: 'single_two_images_mode'
-          on_press: root.switch_single_two_images()
-        Button:
-          id: settings
-          text: 'settings'
+        height: 30
+        BoxLayout:
+          height: 30
+          size_hint: 0.5, None
+          orientation: 'horizontal'
+          Label:
+            id: is_agent_registered_label
+            text: 'Agent is not registered'
+          Button:
+            id: start_shutdown_agent_button
+            text: 'Start agent'
+            on_press: root.start_shutdown_agent_pressed()
+
+      AnchorLayout:
+        anchor_x: 'right'
+        anchor_y: 'center'
+        size_hint: 1, None
+        height: 30
+        BoxLayout:
+          height: 30
+          size_hint: 0.4, None
+          orientation: 'horizontal'
+          Button:
+            id: single_two_images_mode
+            text: 'single_two_images_mode'
+            on_press: root.switch_single_two_images()
+          Button:
+            id: settings
+            text: 'settings'
 
     BoxLayout:
       orientation: 'horizontal'

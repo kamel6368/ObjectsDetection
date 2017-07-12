@@ -37,17 +37,14 @@ class Main:
         self.video_capture = cv2.VideoCapture(0)
 
         self.logger.print_msg('Agent started')
-        self.start_tcp_server()
-        sleep(1)
         self.start_tcp_client()
-        tasks.register(self.tcp_client)
+        tasks.register(self.tcp_client, self.logger)
+
+        self.start_tcp_server()
 
         while not self.is_registered:
             sleep(1)
         self.logger.print_msg('Agent registered')
-
-
-
 
         while not self.exit:
             sleep(1)

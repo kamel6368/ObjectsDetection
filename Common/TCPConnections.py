@@ -153,8 +153,12 @@ class TCPServer(Thread):
 
     @staticmethod
     def extract_command_content(message):
-        return message.split('|')[1], message.split('|')[2]
-
+        try:
+            x,y = message.split('|')[1], message.split('|')[2]
+        except:
+            print 'ERROR: '+message
+            sleep(10)
+        return x,y
 
 class TCPClient:
 
@@ -211,3 +215,4 @@ class TCPClient:
             except socket.error:
                 pass
             self.socket.close()
+            self.logger.print_msg('TCPClient/Stopped')

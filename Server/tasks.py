@@ -20,6 +20,7 @@ def acknowledge_agent_registration(main, tcp_client):
     if not main.is_agent_alive:
         tcp_client.connect()
     tcp_client.send(TCPCommands.REGISTER_ACK, '')
+    main.is_agent_alive = True
 
 
 def send_detected_object_to_agent(objects, tcp_client):
@@ -36,3 +37,20 @@ def convert_cv2_image_to_kivy_texture(frame):
     image_texture = Texture.create(size=(frame.shape[1], frame.shape[0]), colorfmt='bgr')
     image_texture.blit_buffer(buf, colorfmt='bgr', bufferfmt='ubyte')
     return image_texture
+
+
+def start_agent():
+    pass
+
+
+def shutdown_agent(tcp_client):
+    tcp_client.send(TCPCommands.SHUTDOWN, '')
+
+
+def update_gui_registration(main_layout):
+    main_layout.update_registered_label()
+    main_layout.update_start_shutdown_button()
+
+
+def update_gui_shutdown(main_layout):
+    update_gui_registration(main_layout)

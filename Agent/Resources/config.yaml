@@ -1,7 +1,7 @@
 TCPConnection:
-  remote_server_address: 127.0.0.1
+  remote_server_address: 192.168.1.10
   remote_server_port: 23506
-  receive_address: 127.0.0.1
+  receive_address: 192.168.1.5
   receive_port: 23507
   buffer_size: 2048
   socket_timeout: 3.0

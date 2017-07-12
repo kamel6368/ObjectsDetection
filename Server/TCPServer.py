@@ -18,6 +18,11 @@ class TCPServer(CommonTCPServer):
 
         elif command == TCPCommands.REGISTER:
             tasks.acknowledge_agent_registration(self.main, self.main.tcp_client)
+            tasks.update_gui_registration(self.main.main_layout)
+
+        elif command == TCPCommands.SHUTDOWN_ACK:
+            self.main.is_agent_alive = False
+            tasks.update_gui_shutdown(self.main.main_layout)
 
     def restart_callback(self):
         self.main.is_agent_alive = False

@@ -1,7 +1,7 @@
 TCPConnection:
-  agent_address: 127.0.0.1
+  agent_address: 192.168.1.5
   agent_port: 23507
-  receive_address: 127.0.0.1
+  receive_address: 192.168.1.10
   receive_port: 23506
   buffer_size: 2048
   socket_timeout: 3.0

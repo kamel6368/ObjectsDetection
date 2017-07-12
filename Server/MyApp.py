@@ -21,7 +21,7 @@ class MyApp(App):
 
     def build(self):
         Builder.load_file('Layouts/main_layout.kv')
-        self.main_layout = MainLayout()
+        self.main_layout = MainLayout(self)
         return self.main_layout
 
     def start_tcp_server(self):
