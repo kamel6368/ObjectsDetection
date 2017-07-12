@@ -28,4 +28,3 @@ class TCPServer(CommonTCPServer):
 
     def restart_callback(self):
         self.main.start_tcp_server()
-

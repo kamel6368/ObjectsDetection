@@ -135,7 +135,7 @@ class TCPServer(Thread):
                 connection, _ = self.socket.accept()
                 is_connected = True
             except socket.timeout:
-                self.logger.print_msg('TCPServer/Waiting for connection')
+                self.logger.print_msg('TCPServer/Waiting for socket accept')
                 continue
 
         if connection is not None:
@@ -187,7 +187,10 @@ class TCPClient:
     def send(self, command, content):
         message = self._prepare_message(command, content)
         self.logger.print_msg('TCPClient/Send: ' + message)
-        self.socket.sendall(message)
+        try:
+            self.socket.sendall(message)
+        except socket.error:
+            pass
 
     @staticmethod
     def _prepare_message(command, content):

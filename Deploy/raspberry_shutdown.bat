@@ -1,6 +1,6 @@
 @echo off
 
-for /f "tokens=1,2 delims==" %%a in (raspberry_params.txt) do (
+for /f "tokens=1,2 delims==" %%a in (RaspberryScripts/raspberry_params.txt) do (
 	
 	IF "%%a"=="ip" ( SET "raspberry_ip=%%b" )
 	IF "%%a"=="user" ( SET "raspberry_user=%%b" )

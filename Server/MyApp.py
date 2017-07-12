@@ -15,7 +15,7 @@ class MyApp(App):
         self.main_layout = None
         self.tcp_server = None
         self.tcp_client = None
-        self.are_agents_alive_before_startup = False
+        self.is_agent_alive = False
         self.logger = None
         App.__init__(self)
 

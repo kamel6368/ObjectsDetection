@@ -20,4 +20,5 @@ class TCPServer(CommonTCPServer):
             tasks.acknowledge_agent_registration(self.main, self.main.tcp_client)
 
     def restart_callback(self):
+        self.main.is_agent_alive = False
         self.main.start_tcp_server()

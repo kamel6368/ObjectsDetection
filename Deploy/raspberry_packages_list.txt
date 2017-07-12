@@ -1,4 +1,0 @@
-sudo python -m pip install --upgrade pip wheel setuptools
-sudo pip install numpy
-sudo pip install pyyaml
-sudo pip install enum

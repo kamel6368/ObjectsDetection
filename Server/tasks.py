@@ -5,8 +5,8 @@ from Common.TCPConnections import TCPCommands
 
 
 def try_reconnect_to_alive_agents(main, tcp_client):
-    main.are_agents_alive_before_startup = tcp_client.connect(single_try=True)
-    if main.are_agents_alive_before_startup:
+    main.is_agent_alive = tcp_client.connect(single_try=True)
+    if main.is_agent_alive:
         tcp_client.send(TCPCommands.REMOTE_SERVER_BREAK_DOWN, '')
 
 
@@ -17,7 +17,7 @@ def show_image(layout, image):
 
 
 def acknowledge_agent_registration(main, tcp_client):
-    if not main.are_agents_alive_before_startup:
+    if not main.is_agent_alive:
         tcp_client.connect()
     tcp_client.send(TCPCommands.REGISTER_ACK, '')
 
