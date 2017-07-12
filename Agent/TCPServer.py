@@ -12,6 +12,8 @@ class TCPServer(CommonTCPServer):
 
         if command == TCPCommands.REGISTER_ACK:
             self.main.is_registered = True
+            image = tasks.take_picture(self.main.video_capture)
+            tasks.send_image_to_remote_server(self.main.tcp_client, image)
 
         elif command == TCPCommands.OBJECTS:
             image = tasks.take_picture(self.main.video_capture)
@@ -21,6 +23,7 @@ class TCPServer(CommonTCPServer):
             tasks.shutdown(self.main, self.main.tcp_server)
 
         elif command == TCPCommands.REMOTE_SERVER_BREAK_DOWN:
+            self.main.is_registered = False
             tasks.register(self.main.tcp_client)
 
     def restart_callback(self):

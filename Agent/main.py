@@ -34,20 +34,19 @@ class Main:
     def run(self):
         self.logger = Logger()
 
+        self.video_capture = cv2.VideoCapture(0)
+
         self.logger.print_msg('Agent started')
         self.start_tcp_client()
         tasks.register(self.tcp_client)
         self.start_tcp_server()
-        #self.tcp_server.start()
 
         while not self.is_registered:
             sleep(1)
         self.logger.print_msg('Agent registered')
 
-        self.video_capture = cv2.VideoCapture(0)
 
-        image = tasks.take_picture(self.video_capture)
-        tasks.send_image_to_remote_server(self.tcp_client, image)
+
 
         while not self.exit:
             sleep(1)

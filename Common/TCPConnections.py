@@ -78,6 +78,10 @@ class TCPServer(Thread):
                 data = None
                 msg_length = None
 
+        try:
+            self.socket.shutdown(socket.SHUT_RDWR)
+        except socket.error:
+            pass
         self.socket.close()
         self.logger.print_msg('TCPServer/Stopped')
         if should_restart:
@@ -119,6 +123,7 @@ class TCPServer(Thread):
         self.socket = socket.socket(socket.AF_INET, socket.SOCK_STREAM)
         self.socket.setsockopt(socket.SOL_SOCKET, socket.SO_REUSEADDR, 1)
         self.socket.bind((self.address, self.port))
+
         self.socket.listen(1)
         self.socket.settimeout(self.socket_timeout)
 
@@ -198,4 +203,8 @@ class TCPClient:
 
     def disconnect(self):
         if self.socket is not None:
+            try:
+                self.socket.shutdown(socket.SHUT_RDWR)
+            except socket.error:
+                pass
             self.socket.close()

@@ -18,6 +18,8 @@ def register(tcp_client):
 
 
 def shutdown(main, tcp_server, tcp_client):
-    tcp_server.disconnect()
-    tcp_client.disconnect()
+    if tcp_server is not None:
+        tcp_server.disconnect()
+    if tcp_client is not None:
+        tcp_client.disconnect()
     main.exit = True
