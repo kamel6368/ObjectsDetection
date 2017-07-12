@@ -23,3 +23,6 @@ class TCPServer(CommonTCPServer):
         elif command == TCPCommands.REMOTE_SERVER_BREAK_DOWN:
             tasks.register(self.main.tcp_client)
 
+    def restart_callback(self):
+        self.main.start_tcp_server()
+

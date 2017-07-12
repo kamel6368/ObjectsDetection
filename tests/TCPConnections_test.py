@@ -1,6 +1,6 @@
 import unittest
 from mock import Mock
-from Common.TCPConnections import TCPServer, TCPClient
+from Common.TCPConnections import TCPServer, TCPClient, ClientShutdownException
 
 
 class MyTCPServer(TCPServer):
@@ -160,4 +160,11 @@ class TCPServerTest(unittest.TestCase):
         self.assertEqual('14|ala m', data)
         self.assertEqual(14, msg_length)
         self.assertFalse(is_complete_message)
+
+    def test__manage_chunk_invalid_message_should_raise_exception(self):
+        data = None
+        msg_length = None
+        chunk = ''
+        self.assertRaises(ClientShutdownException, self.tcp_server._manage_chunk, chunk, data, msg_length)
+
 

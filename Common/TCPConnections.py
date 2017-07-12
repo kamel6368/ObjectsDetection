@@ -22,6 +22,11 @@ class TCPCommands:
     REMOTE_SERVER_BREAK_DOWN = 'REMOTE_SERVER_BREAK_DOWN'
 
 
+class ClientShutdownException(Exception):
+    def __init__(self, message=None):
+        Exception.__init__(self, message)
+
+
 class TCPServer(Thread):
     __metaclass__ = ABCMeta
 
@@ -37,10 +42,7 @@ class TCPServer(Thread):
         self.exit = False
 
     def run(self):
-        self.socket = socket.socket(socket.AF_INET, socket.SOCK_STREAM)
-        self.socket.bind((self.address, self.port))
-        self.socket.listen(1)
-        self.socket.settimeout(self.socket_timeout)
+        self._setup_socket()
 
         self.logger.print_msg('TCPServer/Started')
 
@@ -48,6 +50,8 @@ class TCPServer(Thread):
 
         data = None
         msg_length = None
+
+        should_restart = False
 
         while not self.exit:
             try:
@@ -59,7 +63,13 @@ class TCPServer(Thread):
                 connection = self._reconnect()
                 continue
 
-            data, msg_length, is_complete_message = self._manage_chunk(chunk, data, msg_length)
+            try:
+                data, msg_length, is_complete_message = self._manage_chunk(chunk, data, msg_length)
+            except ClientShutdownException:
+                self.logger.print_msg('TCPServer/Client shutdown. Restarting server...')
+                self.disconnect()
+                should_restart = True
+                continue
 
             if is_complete_message:
                 self.logger.print_msg('TCPServer/Received: ' + data)
@@ -70,6 +80,8 @@ class TCPServer(Thread):
 
         self.socket.close()
         self.logger.print_msg('TCPServer/Stopped')
+        if should_restart:
+            self.restart_callback()
 
     def disconnect(self):
         self.exit = True
@@ -91,10 +103,7 @@ class TCPServer(Thread):
                     msg_length = int(data.split('|')[0])
                 except ValueError:
                     self.logger.print_msg('TCPServer/Invalid chunk or message: ' + chunk)
-                    if data == '':
-                        data = None
-                    return data, msg_length, is_message_complete
-
+                    raise ClientShutdownException()
 
             if len(data) >= msg_length:
                 self.buffer = data[msg_length + 1:]
@@ -105,6 +114,13 @@ class TCPServer(Thread):
                 is_message_complete = True
 
         return data, msg_length, is_message_complete
+
+    def _setup_socket(self):
+        self.socket = socket.socket(socket.AF_INET, socket.SOCK_STREAM)
+        self.socket.setsockopt(socket.SOL_SOCKET, socket.SO_REUSEADDR, 1)
+        self.socket.bind((self.address, self.port))
+        self.socket.listen(1)
+        self.socket.settimeout(self.socket_timeout)
 
     def _reconnect(self):
         connection = None
@@ -124,7 +140,11 @@ class TCPServer(Thread):
 
     @abstractmethod
     def handle_message(self, command, content):
-        raise NotImplementedError
+        raise NotImplementedError()
+
+    @abstractmethod
+    def restart_callback(self):
+        raise NotImplementedError()
 
     @staticmethod
     def extract_command_content(message):

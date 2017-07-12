@@ -15,29 +15,34 @@ class Main:
         self.tcp_server = None
         self.tcp_client = None
         self.video_capture = None
+        self.logger = None
 
-    def run(self):
-        logger = Logger()
-
-        logger.print_msg('Agent started')
-
+    def start_tcp_server(self):
         receive_address = config('TCPConnection/receive_address')
         receive_port = config('TCPConnection/receive_port')
         buffer_size = config('TCPConnection/buffer_size')
         socket_timeout = config('TCPConnection/socket_timeout')
-        self.tcp_server = TCPServer(receive_address, receive_port, buffer_size, socket_timeout, logger, self)
+        self.tcp_server = TCPServer(receive_address, receive_port, buffer_size, socket_timeout, self.logger, self)
+        self.tcp_server.start()
 
+    def start_tcp_client(self):
         remote_server_address = config('TCPConnection/remote_server_address')
         remote_server_port = config('TCPConnection/remote_server_port')
-        self.tcp_client = TCPClient(remote_server_address, remote_server_port, socket_timeout, logger)
+        socket_timeout = config('TCPConnection/socket_timeout')
+        self.tcp_client = TCPClient(remote_server_address, remote_server_port, socket_timeout, self.logger)
 
+    def run(self):
+        self.logger = Logger()
+
+        self.logger.print_msg('Agent started')
+        self.start_tcp_client()
         tasks.register(self.tcp_client)
-
-        self.tcp_server.start()
+        self.start_tcp_server()
+        #self.tcp_server.start()
 
         while not self.is_registered:
             sleep(1)
-        logger.print_msg('Agent registered')
+        self.logger.print_msg('Agent registered')
 
         self.video_capture = cv2.VideoCapture(0)
 
@@ -46,7 +51,7 @@ class Main:
 
         while not self.exit:
             sleep(1)
-        logger.print_msg('Agent stopped')
-        logger.print_msg('BYE!')
+        self.logger.print_msg('Agent stopped')
+        self.logger.print_msg('BYE!')
 
 

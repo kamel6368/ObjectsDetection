@@ -18,3 +18,6 @@ class TCPServer(CommonTCPServer):
 
         elif command == TCPCommands.REGISTER:
             tasks.acknowledge_agent_registration(self.main, self.main.tcp_client)
+
+    def restart_callback(self):
+        self.main.start_tcp_server()
