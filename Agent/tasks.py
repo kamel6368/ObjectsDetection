@@ -1,5 +1,3 @@
-from time import sleep
-import thread
 from Common.image_serialization import image_to_string
 from Common.TCPConnections import TCPCommands
 
@@ -21,8 +19,11 @@ def register(tcp_client, logger):
     logger.print_msg('tasks/register end')
 
 
-def shutdown(main, tcp_server, tcp_client):
+def acknowledge_shutdown(tcp_client):
     tcp_client.send(TCPCommands.SHUTDOWN_ACK, '')
+
+
+def shutdown(main, tcp_server, tcp_client):
     if tcp_server is not None:
         tcp_server.disconnect()
     if tcp_client is not None:

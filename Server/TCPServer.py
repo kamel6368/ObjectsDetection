@@ -25,6 +25,7 @@ class TCPServer(CommonTCPServer):
             tasks.update_gui_registration(self.main.main_layout)
 
         elif command == TCPCommands.SHUTDOWN_ACK:
+            tasks.acknowledge_agent_shutdown(self.main.tcp_client)
             self.main.is_agent_alive = False
             tasks.update_gui_shutdown(self.main.main_layout)
 

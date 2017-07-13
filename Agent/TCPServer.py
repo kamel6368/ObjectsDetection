@@ -20,6 +20,9 @@ class TCPServer(CommonTCPServer):
             tasks.send_image_to_remote_server(self.main.tcp_client, image)
 
         elif command == TCPCommands.SHUTDOWN:
+            tasks.acknowledge_shutdown(self.main.tcp_client)
+
+        elif command == TCPCommands.SHUTDOWN_ACK_ACK:
             tasks.shutdown(self.main, self.main.tcp_server, self.main.tcp_client)
 
         elif command == TCPCommands.REMOTE_SERVER_BREAK_DOWN:

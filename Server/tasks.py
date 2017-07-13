@@ -47,6 +47,10 @@ def shutdown_agent(tcp_client):
     tcp_client.send(TCPCommands.SHUTDOWN, '')
 
 
+def acknowledge_agent_shutdown(tcp_client):
+    tcp_client.send(TCPCommands.SHUTDOWN_ACK_ACK, '')
+
+
 def update_gui_registration(main_layout):
     main_layout.update_registered_label()
     main_layout.update_start_shutdown_button()

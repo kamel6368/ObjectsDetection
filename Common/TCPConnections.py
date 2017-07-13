@@ -19,6 +19,7 @@ class TCPCommands:
     STREAM_OFF_ACK = 'STREAM_OFF_ACK'
     SHUTDOWN = 'SHUTDOWN'
     SHUTDOWN_ACK = 'SHUTDOWN_ACK'
+    SHUTDOWN_ACK_ACK = 'SHUTDOWN_ACK_ACK'
     REMOTE_SERVER_BREAK_DOWN = 'REMOTE_SERVER_BREAK_DOWN'
 
 
@@ -73,7 +74,11 @@ class TCPServer(Thread):
 
             if is_complete_message:
                 self.logger.print_msg('TCPServer/Received: ' + data)
-                command, content = self.extract_command_content(data)
+                try:
+                    command, content = self.extract_command_content(data)
+                except:
+                    self.logger.print_msg('TCPServer/Invalid message format')
+                    continue
                 self.handle_message(command, content)
                 data = None
                 msg_length = None
@@ -153,12 +158,8 @@ class TCPServer(Thread):
 
     @staticmethod
     def extract_command_content(message):
-        try:
-            x,y = message.split('|')[1], message.split('|')[2]
-        except:
-            print 'ERROR: '+message
-            sleep(10)
-        return x,y
+        return message.split('|')[1], message.split('|')[2]
+
 
 class TCPClient:
 
