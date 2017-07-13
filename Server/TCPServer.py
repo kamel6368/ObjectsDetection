@@ -12,7 +12,11 @@ class TCPServer(CommonTCPServer):
     def handle_message(self, command, content):
 
         if command == TCPCommands.IMAGE:
-            image = image_from_string(content)
+            try:
+                image = image_from_string(content)
+            except:
+                self.logger.print_msg('TCPServer/handle_message/invalid image')
+                return
             tasks.show_image(self.main.main_layout, image)
             tasks.send_detected_object_to_agent(None, self.main.tcp_client)
 
