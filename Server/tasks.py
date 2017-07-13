@@ -58,3 +58,15 @@ def update_gui_registration(main_layout):
 
 def update_gui_shutdown(main_layout):
     update_gui_registration(main_layout)
+
+
+def start_stream(tcp_client):
+    tcp_client.send(TCPCommands.STREAM_ON, '')
+
+
+def stop_stream(tcp_client):
+    tcp_client.send(TCPCommands.STREAM_OFF, '')
+
+
+def update_gui_stream_state_change(main_layout):
+    main_layout.update_start_stop_stream_button()

@@ -14,10 +14,10 @@ class MainLayout(BoxLayout):
     def switch_single_two_images(self):
         if self.single_image:
             self.single_image = False
-            self.ids.images_container.add_widget(self.quantization_image)
+            self.ids.images_container.add_widget(self.ids.quantization_image)
         else:
             self.single_image = True
-            self.ids.images_container.remove_widget(self.quantization_image)
+            self.ids.images_container.remove_widget(self.ids.quantization_image)
 
     def start_shutdown_agent_pressed(self):
         if self.main.is_agent_alive:
@@ -36,3 +36,15 @@ class MainLayout(BoxLayout):
             self.ids.start_shutdown_agent_button.text = 'Shutdown agent'
         else:
             self.ids.start_shutdown_agent_button.text = 'Start agent'
+
+    def start_stop_stream(self):
+        if self.main.is_stream_on:
+            tasks.stop_stream(self.main.tcp_client)
+        else:
+            tasks.start_stream(self.main.tcp_client)
+
+    def update_start_stop_stream_button(self):
+        if self.main.is_stream_on:
+            self.ids.start_stop_stream_button.text = 'Stop stream'
+        else:
+            self.ids.start_stop_stream_button.text = 'Start stream'

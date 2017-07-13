@@ -17,6 +17,7 @@ class MyApp(App):
         self.tcp_client = None
         self.is_agent_alive = False
         self.logger = None
+        self.is_stream_on = False
         App.__init__(self)
 
     def build(self):

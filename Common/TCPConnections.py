@@ -55,14 +55,15 @@ class TCPServer(Thread):
         should_restart = False
 
         while not self.exit:
-            try:
-                chunk = connection.recv(self.buffer_size)
-            except socket.timeout:
-                continue
-            except socket.error:
-                self.logger.print_msg('TCPServer/Lost connection. Reconnecting...')
-                connection = self._reconnect()
-                continue
+            if self.buffer is None:
+                try:
+                    chunk = connection.recv(self.buffer_size)
+                except socket.timeout:
+                    continue
+                except socket.error:
+                    self.logger.print_msg('TCPServer/Lost connection. Reconnecting...')
+                    connection = self._reconnect()
+                    continue
 
             try:
                 data, msg_length, is_complete_message = self._manage_chunk(chunk, data, msg_length)
@@ -77,7 +78,7 @@ class TCPServer(Thread):
                 try:
                     command, content = self.extract_command_content(data)
                 except:
-                    self.logger.print_msg('TCPServer/Invalid message format')
+                    self.logger.print_msg('TCPServer/Invalid message format. Chunk: ' + chunk)
                     continue
                 self.handle_message(command, content)
                 data = None
@@ -112,13 +113,18 @@ class TCPServer(Thread):
                     msg_length = int(data.split('|')[0])
                 except ValueError:
                     self.logger.print_msg('TCPServer/Invalid chunk or message: ' + chunk)
-                    raise ClientShutdownException()
+                    if chunk == '':
+                        raise ClientShutdownException()
+
+                    splitted = data.split('|')
+                    data = splitted[-4] + '|' + splitted[-3] + '|' + splitted[-2] + '|' + splitted[-1]
+                    msg_length = int(splitted[-4])
 
             if len(data) >= msg_length:
-                self.buffer = data[msg_length + 1:]
+                self.buffer = data[msg_length:]
                 if self.buffer == '':
                     self.buffer = None
-                data = data[:msg_length]
+                data = data[:msg_length - 1]
                 msg_length = None
                 is_message_complete = True
 
@@ -169,6 +175,7 @@ class TCPClient:
         self.socket = None
         self.socket_timeout = socket_timeout
         self.logger = logger
+        self.is_socket_busy = False
 
     def connect(self, single_try=False):
         self.socket = socket.socket(socket.AF_INET, socket.SOCK_STREAM)
@@ -199,7 +206,7 @@ class TCPClient:
 
     @staticmethod
     def _prepare_message(command, content):
-        data = '|' + command + '|' + content
+        data = '|' + command + '|' + content + '|'
         data_length = len(data)
         size_flag_length = len(str(data_length))
         total_length = size_flag_length + data_length

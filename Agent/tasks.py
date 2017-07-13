@@ -23,9 +23,19 @@ def acknowledge_shutdown(tcp_client):
     tcp_client.send(TCPCommands.SHUTDOWN_ACK, '')
 
 
-def shutdown(main, tcp_server, tcp_client):
+def shutdown(main, tcp_server, tcp_client, video_capture):
+    video_capture.release()
     if tcp_server is not None:
         tcp_server.disconnect()
     if tcp_client is not None:
         tcp_client.disconnect()
     main.exit = True
+
+
+def acknowledge_stream_start(tcp_client):
+    tcp_client.send(TCPCommands.STREAM_ON_ACK, '')
+
+
+def acknowledge_stream_stop(tcp_client):
+    tcp_client.send(TCPCommands.STREAM_OFF_ACK, '')
+

@@ -29,6 +29,14 @@ class TCPServer(CommonTCPServer):
             self.main.is_agent_alive = False
             tasks.update_gui_shutdown(self.main.main_layout)
 
+        elif command == TCPCommands.STREAM_ON_ACK:
+            self.main.is_stream_on = True
+            tasks.update_gui_stream_state_change(self.main.main_layout)
+
+        elif command == TCPCommands.STREAM_OFF_ACK:
+            self.main.is_stream_on = False
+            tasks.update_gui_stream_state_change(self.main.main_layout)
+
     def restart_callback(self):
         self.main.is_agent_alive = False
         self.main.start_tcp_server()

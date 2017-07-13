@@ -76,11 +76,9 @@
       size_hint: 1, None
       spacing: 20
       Button:
-        id: start_stream
+        id: start_stop_stream_button
         text: 'start_stream'
-      Button:
-        id: stop_stream
-        text: 'stop_stream'
+        on_press: root.start_stop_stream()
       BoxLayout:
         orientation: 'vertical'
         Label:
