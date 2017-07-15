@@ -1,4 +1,5 @@
 import tasks
+import ImageProcessing.parameters_loader as parameters_loader
 from kivy.app import App
 from kivy.lang.builder import Builder
 from MainLayout import MainLayout
@@ -6,6 +7,7 @@ from Common.TCPConnections import TCPClient
 from TCPServer import TCPServer
 from Common.config import config
 from Common.Logger import Logger
+from ImageProcessing.ObjectDetector import ObjectDetector
 
 
 class MyApp(App):
@@ -20,6 +22,7 @@ class MyApp(App):
         self.is_stream_on = False
         self.single_image_mode = False
         self.apply_quantization = False
+        self.object_detector = None
         App.__init__(self)
 
     def build(self):
@@ -47,6 +50,9 @@ class MyApp(App):
         self.start_tcp_client()
         tasks.try_reconnect_to_alive_agents(self, self.tcp_client)
         self.start_tcp_server()
+
+        self.object_detector = ObjectDetector()
+        parameters_loader.load_all_from_file(self.object_detector)
 
     def on_stop(self):
         self.tcp_server.disconnect()

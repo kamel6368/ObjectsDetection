@@ -38,11 +38,11 @@ image_processing_params:
     blue_hue_bound: (76, 130)
     violet_hue_bound: (131, 143)
 
-  combined_objects_detecion:
+  combined_objects_detection:
     canny_threshold_1: 50
     canny_threshold_2: 500
 
-  image_preparetion:
+  image_preparation:
     dark_pixels_percentage_border: 0.4
     gamma_increase: 2.0
     number_of_quantizied_colors: 12

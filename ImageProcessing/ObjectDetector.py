@@ -1,14 +1,13 @@
 import cv2
 import numpy as np
 import shape_detection as sd
-import pictures_transformations as pt
-import pattern_recognition as pr
-import common_operations as common
-import size_detection as size_det
+from CommonOperator import CommonOperator
+from PatternRecognizer import PatternRecognizer
+from PictureTransformer import PictureTransformer
+from SizeDetector import SizeDetector
 from DataModel.enums import Color, ColorSpace, Pattern
 from DataModel.enums import Shape as enumShape
 from DataModel.object import Shape, CombinedObject
-from resources import ares
 
 
 class ObjectDetector:
@@ -24,6 +23,16 @@ class ObjectDetector:
         for visualization of detected objects
         """
         self.detected_contours = detected_contours
+        self.common_operator = CommonOperator()
+        self.pattern_recognizer = PatternRecognizer(self.common_operator)
+        self.picture_transformer = PictureTransformer()
+        self.size_detector = SizeDetector()
+
+        self.combined_objects_detection_canny_threshold_1 = None
+        self.combined_objects_detection_canny_threshold_2 = None
+        self.image_preparation_dark_pixels_percentage_border = None
+        self.image_preparation_gamma_increase = None
+        self.image_preparation_number_of_quantizied_colors = None
 
     def detect_objects(self, frame, real_distance=None, auto_contour_clear=True, prepare_image_before_detection=True):
         """
@@ -55,8 +64,8 @@ class ObjectDetector:
             if len(part_objects) is 1:
                 result.append(part_objects[0])
             elif len(part_objects) > 1:
-                shape_type = sd.detect_shape(common.convert_numpy_array_for_shape_detection(single_contour))
-                real_width, real_height = size_det.assume_size_from_contour(real_distance, single_contour, frame.shape)
+                shape_type = sd.detect_shape(self.common_operator.convert_numpy_array_for_shape_detection(single_contour))
+                real_width, real_height = self.size_detector.assume_size_from_contour(real_distance, single_contour, frame.shape)
                 result.append(CombinedObject(type=shape_type, width=real_width, height=real_height, parts=part_objects))
 
         if auto_contour_clear:
@@ -69,15 +78,15 @@ class ObjectDetector:
         :param image: raw image from camera or prepared for detection image
         :return: contours list of combined objects in the image
         """
-        canny_threshold_1 = ares('image_processing_params\\combined_objects_detecion\\canny_threshold_1')
-        canny_threshold_2 = ares('image_processing_params\\combined_objects_detecion\\canny_threshold_2')
         edges = cv2.cvtColor(image, cv2.COLOR_BGR2HSV)
-        edges = cv2.Canny(edges, canny_threshold_1, canny_threshold_2)
+        edges = cv2.Canny(edges, self.combined_objects_detection_canny_threshold_1,
+                          self.combined_objects_detection_canny_threshold_2)
         edges = cv2.dilate(edges, None, iterations=2)
         edges = cv2.erode(edges, None, iterations=2)
-        return common.find_contours(edges, cv2.RETR_EXTERNAL)
+        return self.common_operator.find_contours(edges, cv2.RETR_EXTERNAL)
 
-    def _prepare_image_for_single_combined_object(self, image, contour):
+    @staticmethod
+    def _prepare_image_for_single_combined_object(image, contour):
         """
         Creates image where only one combined object is visible and background is black
         :param image: image which are to be prepared for detection of single combined object
@@ -116,8 +125,7 @@ class ObjectDetector:
         result = self._remove_symbol_objects(result)
         return result
 
-    @staticmethod
-    def _prepare_image_for_detection(im):
+    def _prepare_image_for_detection(self, im):
         """
         If image is considered to be dark then it's brightened.
         After this from image is removed light gray / white background.
@@ -125,14 +133,12 @@ class ObjectDetector:
         :param im: raw image from camera
         :return: image ready to for process of object detection
         """
-
-        dark_pixels_percentage_border = ares('image_processing_params\\image_preparetion\\dark_pixels_percentage_border')
-        gamma_increase = ares('image_processing_params\\image_preparetion\\gamma_increase')
-        number_of_quantizied_colors = ares('image_processing_params\\image_preparetion\\number_of_quantizied_colors')
-        if pt.percentage_of_bright_pixels(im, ColorSpace.BGR) < dark_pixels_percentage_border:
-            im = pt.adjust_gamma(im, gamma_increase)
-        im = pt.remove_light_gray_background(im)
-        return pt.color_quantization_using_k_means(im, number_of_quantizied_colors)
+        if self.picture_transformer.percentage_of_bright_pixels(im, ColorSpace.BGR) < \
+                self.image_preparation_dark_pixels_percentage_border:
+            im = self.picture_transformer.adjust_gamma(im, self.image_preparation_gamma_increase)
+        im = self.picture_transformer.remove_light_gray_background(im)
+        return self.picture_transformer.color_quantization_using_k_means(im,
+                                                                         self.image_preparation_number_of_quantizied_colors)
 
     def clear_contours(self):
         """
@@ -151,7 +157,7 @@ class ObjectDetector:
         :return: instance of basic object
         """
 
-        main_shape = sd.detect_shape(common.convert_numpy_array_for_shape_detection(contour))
+        main_shape = sd.detect_shape(self.common_operator.convert_numpy_array_for_shape_detection(contour))
 
         if main_shape is enumShape.LINE:
             return None
@@ -162,9 +168,9 @@ class ObjectDetector:
         pattern, pattern_color = Pattern.NONE, Color.NONE
         if len(symbols_list) is 0:
             image_for_pattern_recognition = self._prepare_image_for_pattern_recognition(frame, contour, color)
-            pattern, pattern_color = pr.find_pattern(image_for_pattern_recognition)
+            pattern, pattern_color = self.pattern_recognizer.find_pattern(image_for_pattern_recognition)
 
-        real_width, real_height = size_det.assume_size_from_contour(real_distance, contour, frame.shape)
+        real_width, real_height = self.size_detector.assume_size_from_contour(real_distance, contour, frame.shape)
 
         return Shape(main_shape, real_width, real_height, color, pattern, pattern_color, symbols_list)
 
@@ -188,12 +194,12 @@ class ObjectDetector:
                     e = cv2.arcLength(single_contour, True)
                     single_contour = cv2.approxPolyDP(single_contour, e * 0.02, closed=True)
                     self.detected_contours.append((symbol_color, single_contour))
-                    symbol_shape = sd.detect_shape(common.convert_numpy_array_for_shape_detection(single_contour))
+                    symbol_shape = sd.detect_shape(self.common_operator.convert_numpy_array_for_shape_detection(single_contour))
 
                     if symbol_shape is enumShape.LINE:
                         continue
 
-                    real_width, real_height = size_det.assume_size_from_contour(real_distance, single_contour, sub_img.shape)
+                    real_width, real_height = self.size_detector.assume_size_from_contour(real_distance, single_contour, sub_img.shape)
 
                     symbol = Shape(symbol_shape, real_width, real_height, symbol_color, Pattern.NONE, Color.NONE)
                     symbols_list.append(symbol)
@@ -224,10 +230,10 @@ class ObjectDetector:
         mask = np.zeros(frame.shape, np.uint8)
         cv2.fillPoly(mask, [contour], (255, 255, 255))
         image_for_pattern = cv2.cvtColor(cv2.bitwise_and(mask, frame), cv2.COLOR_BGR2HSV)
-        color_range = common.color_bounds(color)
+        color_range = self.common_operator.color_bounds(color)
         if color_range[0][0] > color_range[1][0]:
-            mask1 = cv2.inRange(image_for_pattern, color_range[0], common.maximum_bound())
-            mask2 = cv2.inRange(image_for_pattern, common.minimum_bound(), color_range[1])
+            mask1 = cv2.inRange(image_for_pattern, color_range[0], self.common_operator.maximum_bound())
+            mask2 = cv2.inRange(image_for_pattern, self.common_operator.minimum_bound(), color_range[1])
             image_for_pattern = cv2.bitwise_or(mask1, mask2)
         else:
             image_for_pattern = cv2.inRange(image_for_pattern, color_range[0], color_range[1])
@@ -273,18 +279,19 @@ class ObjectDetector:
 
         hsv = cv2.cvtColor(frame, cv2.COLOR_BGR2HSV)
 
-        color_bound = common.color_bounds(color)
+        color_bound = self.common_operator.color_bounds(color)
         if color_bound[0] > color_bound[1]:
-            mask1 = cv2.inRange(hsv, color_bound[0], common.maximum_bound())
-            mask2 = cv2.inRange(hsv, common.minimum_bound(), color_bound[1])
+            mask1 = cv2.inRange(hsv, color_bound[0], self.common_operator.maximum_bound())
+            mask2 = cv2.inRange(hsv, self.common_operator.minimum_bound(), color_bound[1])
             mask = cv2.bitwise_or(mask1, mask2)
         else:
             mask = cv2.inRange(hsv, color_bound[0], color_bound[1])
         mask = cv2.erode(mask, None, iterations=2)
         mask = cv2.dilate(mask, None, iterations=2)
 
-        result_contours = common.find_contours(mask.copy(), cv2.RETR_EXTERNAL)
+        result_contours = self.common_operator.find_contours(mask.copy(), cv2.RETR_EXTERNAL)
         return result_contours
+
 
 
 

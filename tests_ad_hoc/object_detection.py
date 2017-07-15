@@ -1,17 +1,19 @@
 ''' Prosze mi tego pliku nie zmieniac ~ Kucu, 2017 '''
 
 import cv2
-import Agent.database as db
-import Agent.ImageProcessing.pictures_transformations as pt
-from Agent.ImageProcessing.objects_detection import ObjectDetector
-from Agent.enums import Color
-from Agent.enums import ColorSpace
-from Agent.object import Shape
+import cv2
+#import Agent.database as db
+from ImageProcessing.ObjectDetector import ObjectDetector
+from DataModel.enums import Color
+import ImageProcessing.parameters_loader as loader
 
 
 
 cam = cv2.VideoCapture(0)
+print cam.get(cv2.CAP_PROP_POS_FRAMES)
+
 od = ObjectDetector()
+loader.load_all_from_file(od)
 for i in range(20):
     cam.read()
 
@@ -23,7 +25,9 @@ while True:
         #images.append(im)
     #im = pt.merge_pictures(images, ColorSpace.BGR, True)
 
+    print 'start'
     x = od.detect_objects(im, None, False)
+    print 'end'
 
     for obj in x:
         print obj.to_string()
@@ -47,9 +51,7 @@ while True:
     cv2.imshow('detected_objects', im)
     cv2.waitKey(1)
 
-    for obj in x:
-        if isinstance(obj, Shape):
-            db.insert(obj)
+
 
 
 
