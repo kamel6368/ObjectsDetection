@@ -8,8 +8,7 @@ def send_image_to_remote_server(tcp_client, image):
 
 
 def take_picture(video_capture):
-    _, image = video_capture.read()
-    return image
+    return video_capture.read()
 
 
 def register(tcp_client, logger):

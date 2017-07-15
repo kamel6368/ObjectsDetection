@@ -5,6 +5,7 @@ from TCPServer import TCPServer
 from Common.config import config
 from Common.TCPConnections import TCPClient
 from Common.Logger import Logger
+from VideoCapturingWorker import VideoCapturingWorker
 
 
 class Main:
@@ -35,7 +36,8 @@ class Main:
     def run(self):
         self.logger = Logger()
 
-        self.video_capture = cv2.VideoCapture(0)
+        self.video_capture = VideoCapturingWorker()
+        self.video_capture.start()
 
         self.logger.print_msg('Agent started')
         self.start_tcp_client()
