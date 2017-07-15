@@ -21,7 +21,7 @@
           Button:
             id: start_shutdown_agent_button
             text: 'Start agent'
-            on_press: root.start_shutdown_agent_pressed()
+            on_press: root._start_shutdown_agent_button_pressed()
 
       AnchorLayout:
         anchor_x: 'right'
@@ -33,9 +33,9 @@
           size_hint: 0.4, None
           orientation: 'horizontal'
           Button:
-            id: single_two_images_mode
+            id: single_two_images_mode_button
             text: 'single_two_images_mode'
-            on_press: root.switch_single_two_images()
+            on_press: root._single_two_images_mode_button_on_press()
           Button:
             id: settings
             text: 'settings'
@@ -61,11 +61,13 @@
           height: 50
           orientation: 'horizontal'
           Button:
-            id: previous_frame
+            id: previous_frame_button
             text: 'previous_frame'
+            disabled: True
           Button:
-            id: next_frame
+            id: next_frame_button
             text: 'next_frame'
+            disabled: True
         Label:
           id: console
           text: 'daf'
@@ -78,18 +80,21 @@
       Button:
         id: start_stop_stream_button
         text: 'start_stream'
-        on_press: root.start_stop_stream()
+        on_press: root._start_stop_stream_button_on_press()
+        disabled: True
       BoxLayout:
         orientation: 'vertical'
         Label:
           text: 'stream_mode'
         Spinner:
-          id: stream_mode
+          id: stream_mode_spinner
           text: 'every_frame'
           values: ['every frame', 'video']
+          disabled: True
       BoxLayout:
         orientation: 'vertical'
         Label:
           text: 'apply_quantization'
         CheckBox:
-          id: apply_quantization
+          id: apply_quantization_checkbox
+          disabled: True

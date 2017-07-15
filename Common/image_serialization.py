@@ -10,7 +10,10 @@ def image_to_string(image):
 
 
 def image_from_string(string):
-    image = base64.b64decode(string)
-    image = np.frombuffer(image, dtype=np.uint8)
-    image = cv2.imdecode(image, flags=1)
+    try:
+        image = base64.b64decode(string)
+        image = np.frombuffer(image, dtype=np.uint8)
+        image = cv2.imdecode(image, flags=1)
+    except:
+        image = None
     return image

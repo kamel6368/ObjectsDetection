@@ -1,6 +1,5 @@
 import cv2
 from kivy.graphics.texture import Texture
-from kivy.clock import mainthread
 from Common.TCPConnections import TCPCommands
 
 
@@ -8,12 +7,6 @@ def try_reconnect_to_alive_agents(main, tcp_client):
     main.is_agent_alive = tcp_client.connect(single_try=True)
     if main.is_agent_alive:
         tcp_client.send(TCPCommands.REMOTE_SERVER_BREAK_DOWN, '')
-
-
-@mainthread
-def show_image(layout, image):
-    image_texture = convert_cv2_image_to_kivy_texture(image)
-    layout.ids.raw_image.texture = image_texture
 
 
 def acknowledge_agent_registration(main, tcp_client):
@@ -51,15 +44,6 @@ def acknowledge_agent_shutdown(tcp_client):
     tcp_client.send(TCPCommands.SHUTDOWN_ACK_ACK, '')
 
 
-def update_gui_registration(main_layout):
-    main_layout.update_registered_label()
-    main_layout.update_start_shutdown_button()
-
-
-def update_gui_shutdown(main_layout):
-    update_gui_registration(main_layout)
-
-
 def start_stream(tcp_client):
     tcp_client.send(TCPCommands.STREAM_ON, '')
 
@@ -68,5 +52,5 @@ def stop_stream(tcp_client):
     tcp_client.send(TCPCommands.STREAM_OFF, '')
 
 
-def update_gui_stream_state_change(main_layout):
-    main_layout.update_start_stop_stream_button()
+def detect_objects(image, is_quantized):
+    pass

@@ -18,6 +18,8 @@ class MyApp(App):
         self.is_agent_alive = False
         self.logger = None
         self.is_stream_on = False
+        self.single_image_mode = False
+        self.apply_quantization = False
         App.__init__(self)
 
     def build(self):
