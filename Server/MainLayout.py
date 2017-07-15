@@ -68,36 +68,5 @@ class MainLayout(BoxLayout):
     def _start_stop_stream_button_on_press(self):
         tasksGUI.start_stop_stream_button_on_press(self.main)
 
-    '''
-    def start_shutdown_agent_pressed(self):
-        if self.main.is_agent_alive:
-            tasks.shutdown_agent(self.main.tcp_client)
-        else:
-            tasks.start_agent()
-
-    def update_registered_label(self):
-        if self.main.is_agent_alive:
-            self.ids.is_agent_registered_label.text = 'Agent is registered'
-        else:
-            self.ids.is_agent_registered_label.text = 'Agent is not registered'
-
-    def update_start_shutdown_button(self):
-        if self.main.is_agent_alive:
-            self.ids.start_shutdown_agent_button.text = 'Shutdown agent'
-        else:
-            self.ids.start_shutdown_agent_button.text = 'Start agent'
-
-    def start_stop_stream(self):
-        if self.main.is_stream_on:
-            tasks.stop_stream(self.main.tcp_client)
-        else:
-            tasks.start_stream(self.main.tcp_client)
-
-    def update_start_stop_stream_button(self):
-        if self.main.is_stream_on:
-            self.ids.start_stop_stream_button.text = 'Stop stream'
-        else:
-            self.ids.start_stop_stream_button.text = 'Start stream'
-    '''
-
-
+    def _apply_quantization_checkbox_on_state_change(self):
+        tasks.change_quantization_state(self.main, self.ids.apply_quantization_checkbox.active)

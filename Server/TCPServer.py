@@ -1,5 +1,6 @@
 import tasks
 import tasksGUI
+import ImageProcessing.objects_detection as object_detection
 from Common.image_serialization import image_from_string
 from Common.TCPConnections import TCPServer as CommonTCPServer, TCPCommands
 
@@ -33,7 +34,7 @@ class TCPServer(CommonTCPServer):
             return
         tasksGUI.update_raw_image(self.main.main_layout, image)
         if self.main.apply_quantization:
-            image = None # quantizie image using ImageProcessing
+            image = object_detection.ObjectDetector._prepare_image_for_detection(image) # quantizie image using ImageProcessing
             tasksGUI.update_quantization_image(self.main.main_layout, image)
         objects = tasks.detect_objects(image, self.main.apply_quantization)
         tasks.send_detected_object_to_agent(objects, self.main.tcp_client)

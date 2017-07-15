@@ -54,3 +54,7 @@ def stop_stream(tcp_client):
 
 def detect_objects(image, is_quantized):
     pass
+
+
+def change_quantization_state(main, should_enable):
+    main.apply_quantization = should_enable

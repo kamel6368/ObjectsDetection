@@ -57,3 +57,5 @@ def update_gui_after_stream_on(main_layout):
 
 def update_gui_after_stream_off(main_layout):
     main_layout.change_start_stop_stream_button_text('Start stream')
+
+
