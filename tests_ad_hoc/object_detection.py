@@ -30,7 +30,7 @@ while True:
     print 'end'
 
     for obj in x:
-        print obj.to_string()
+        print obj.serialize()
 
     print ' '
     print ' '
