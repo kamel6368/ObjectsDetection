@@ -5,3 +5,7 @@ TCPConnection:
   receive_port: 23507
   buffer_size: 2048
   socket_timeout: 3.0
+
+Database:
+  path: 'Resources/Database/objects.db'
+  create_schema_sql: 'Resources/Database/CreateSchema.sql'

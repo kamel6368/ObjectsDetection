@@ -7,7 +7,9 @@ from PictureTransformer import PictureTransformer
 from SizeDetector import SizeDetector
 from DataModel.enums import Color, ColorSpace, Pattern
 from DataModel.enums import Shape as enumShape
-from DataModel.object import Shape, CombinedObject
+from DataModel.Symbol import Symbol
+from DataModel.SimpleObject import SimpleObject
+from DataModel.CombinedObject import CombinedObject
 
 
 class ObjectDetector:
@@ -66,7 +68,8 @@ class ObjectDetector:
             elif len(part_objects) > 1:
                 shape_type = sd.detect_shape(self.common_operator.convert_numpy_array_for_shape_detection(single_contour))
                 real_width, real_height = self.size_detector.assume_size_from_contour(real_distance, single_contour, frame.shape)
-                result.append(CombinedObject(type=shape_type, width=real_width, height=real_height, parts=part_objects))
+                combined_object = CombinedObject(shape_type, real_width, real_height, part_objects)
+                result.append(combined_object)
 
         if auto_contour_clear:
             self.clear_contours()
@@ -172,7 +175,7 @@ class ObjectDetector:
 
         real_width, real_height = self.size_detector.assume_size_from_contour(real_distance, contour, frame.shape)
 
-        return Shape(main_shape, real_width, real_height, color, pattern, pattern_color, symbols_list)
+        return SimpleObject(main_shape, real_width, real_height, color, pattern, pattern_color, symbols_list)
 
     def _find_symbols_in_range(self, main_color, sub_img, real_distance):
         """
@@ -201,7 +204,7 @@ class ObjectDetector:
 
                     real_width, real_height = self.size_detector.assume_size_from_contour(real_distance, single_contour, sub_img.shape)
 
-                    symbol = Shape(symbol_shape, real_width, real_height, symbol_color, Pattern.NONE, Color.NONE)
+                    symbol = Symbol(symbol_shape, real_width, real_height, symbol_color)
                     symbols_list.append(symbol)
 
         return symbols_list
@@ -251,6 +254,7 @@ class ObjectDetector:
         :return: list of detected objects where symbols are excluded
         """
 
+        objects = [o for o in objects if isinstance(o, Symbol)]
         result = []
         symbols = []
         for obj in objects:

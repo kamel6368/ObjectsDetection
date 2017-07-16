@@ -1,15 +1,6 @@
 from enum import Enum
 
 
-class Block(Enum):
-    BALL = 0
-    ROLLER = 1
-    CUBOID = 2
-    CUBE = 3
-    PYRAMID = 4
-    INVALID = 5
-
-
 class Color(Enum):
     RED = 0
     YELLOW = 1
@@ -40,13 +31,6 @@ class Shape(Enum):
     POLYGON = 17
     KITE = 18
     INVALID = 19
-
-
-class MoveState(Enum):
-    DISCONNECTED = 0
-    IDLE = 1
-    MOVING = 2
-    STUCK = 3
 
 
 class ColorSpace(Enum):
