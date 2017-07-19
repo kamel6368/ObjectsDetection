@@ -1,0 +1,7 @@
+INSERT INTO COMBINE_OBJECT
+(
+  SHAPE,
+  WIDTH,
+  HEIGHT
+)
+VALUES (?, ?, ?)

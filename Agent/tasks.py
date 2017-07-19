@@ -1,5 +1,9 @@
-from Common.image_serialization import image_to_string
+import database
+from Common.serialization import image_to_string
 from Common.TCPConnections import TCPCommands
+from DataModel.SimpleObject import SimpleObject
+from DataModel.CombinedObject import CombinedObject
+from Common.serialization import deserialize_list_of_objects
 
 
 def send_image_to_remote_server(tcp_client, image):
@@ -38,3 +42,11 @@ def acknowledge_stream_start(tcp_client):
 def acknowledge_stream_stop(tcp_client):
     tcp_client.send(TCPCommands.STREAM_OFF_ACK, '')
 
+
+def insert_objects_to_database(objects_str, connection):
+    objects = deserialize_list_of_objects(objects_str)
+    for object in objects:
+        if isinstance(object, SimpleObject):
+            database.insert_simple_object(object, connection)
+        elif isinstance(object, CombinedObject):
+            database.insert_combined_object(object, connection)

@@ -112,7 +112,7 @@ class ObjectDetector:
         for main_color in [c for c in Color if c != Color.NONE]:
             # find contours of objects with color main_color
             contours_list = self._detect_basic_objects_contours(main_color, image)
-            if contours_list is []:
+            if contours_list == []:
                 continue
 
             # remove concave contours
@@ -247,14 +247,15 @@ class ObjectDetector:
 
         return image_for_pattern
 
-    def _remove_symbol_objects(self, objects):
+    @staticmethod
+    def _remove_symbol_objects(objects):
         """
         Given list of all detected objects removes those which are classified as symbols
         :param objects: list of detected objects
         :return: list of detected objects where symbols are excluded
         """
 
-        objects = [o for o in objects if isinstance(o, Symbol)]
+        # objects = [o for o in objects if isinstance(o, SimpleObject)]
         result = []
         symbols = []
         for obj in objects:

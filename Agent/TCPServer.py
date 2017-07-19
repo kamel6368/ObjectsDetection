@@ -1,4 +1,5 @@
 import tasks
+import database
 from Common.TCPConnections import TCPServer as CommonTCPServer, TCPCommands
 
 
@@ -11,32 +12,49 @@ class TCPServer(CommonTCPServer):
     def handle_message(self, command, content):
 
         if command == TCPCommands.REGISTER_ACK:
-            self.main.is_registered = True
-
+            self._register_ack_action()
         elif command == TCPCommands.OBJECTS:
-            if self.main.is_stream_on:
-                image = tasks.take_picture(self.main.video_capture)
-                tasks.send_image_to_remote_server(self.main.tcp_client, image)
-
+            self._objects_action(content)
         elif command == TCPCommands.STREAM_ON:
-            tasks.acknowledge_stream_start(self.main.tcp_client)
-            self.main.is_stream_on = True
-            image = tasks.take_picture(self.main.video_capture)
-            tasks.send_image_to_remote_server(self.main.tcp_client, image)
-
+            self._stream_on_action()
         elif command == TCPCommands.STREAM_OFF:
-            self.main.is_stream_on = False
-            tasks.acknowledge_stream_stop(self.main.tcp_client)
-
+            self._stream_off_action()
         elif command == TCPCommands.SHUTDOWN:
-            tasks.acknowledge_shutdown(self.main.tcp_client)
-
+            self._shutdown_action()
         elif command == TCPCommands.SHUTDOWN_ACK_ACK:
-            tasks.shutdown(self.main, self.main.tcp_server, self.main.tcp_client, self.main.video_capture)
-
+            self._shutdown_ack_ack_action()
         elif command == TCPCommands.REMOTE_SERVER_BREAK_DOWN:
-            self.main.is_registered = False
-            tasks.register(self.main.tcp_client, self.logger)
+            self._remote_server_break_down_action()
 
     def restart_callback(self):
         self.main.start_tcp_server()
+
+    def _register_ack_action(self):
+        self.main.is_registered = True
+        self.main.database_connection = database.connect()
+
+    def _objects_action(self, content):
+        tasks.insert_objects_to_database(content, self.main.database_connection)
+        if self.main.is_stream_on:
+            image = tasks.take_picture(self.main.video_capture)
+            tasks.send_image_to_remote_server(self.main.tcp_client, image)
+
+    def _stream_on_action(self):
+        tasks.acknowledge_stream_start(self.main.tcp_client)
+        self.main.is_stream_on = True
+        image = tasks.take_picture(self.main.video_capture)
+        tasks.send_image_to_remote_server(self.main.tcp_client, image)
+
+    def _stream_off_action(self):
+        self.main.is_stream_on = False
+        tasks.acknowledge_stream_stop(self.main.tcp_client)
+
+    def _shutdown_action(self):
+        tasks.acknowledge_shutdown(self.main.tcp_client)
+
+    def _shutdown_ack_ack_action(self):
+        tasks.shutdown(self.main, self.main.tcp_server, self.main.tcp_client, self.main.video_capture)
+
+    def _remote_server_break_down_action(self):
+        self.main.is_registered = False
+        tasks.register(self.main.tcp_client, self.logger)

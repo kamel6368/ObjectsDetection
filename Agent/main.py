@@ -1,5 +1,5 @@
-import cv2
 import tasks
+import database
 from time import sleep
 from TCPServer import TCPServer
 from Common.config import config
@@ -18,6 +18,7 @@ class Main:
         self.video_capture = None
         self.logger = None
         self.is_stream_on = False
+        self.database_connection = None
 
     def start_tcp_server(self):
         receive_address = config('TCPConnection/receive_address')

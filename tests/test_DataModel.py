@@ -77,10 +77,7 @@ class SimpleObjectTest(unittest.TestCase):
         self.assertEqual(Pattern.HORIZONTAL_LINES.value, result_dict['pattern'])
         self.assertEqual(Color.GREEN.value, result_dict['pattern_color'])
         self.assertEqual(None, result_dict['id'])
-        json_symbols = json.loads(result_dict['symbols'])
-        symbols_dict = []
-        for json_symbol in json_symbols:
-            symbols_dict.append(json.loads(json_symbol))
+        symbols_dict = result_dict['symbols']
         self.assertEqual('Symbol', symbols_dict[0]['class'])
         self.assertEqual(Shape.ELLIPSE.value, symbols_dict[0]['shape'])
         self.assertEqual(Size.LARGE.value, symbols_dict[0]['width'])
@@ -114,10 +111,7 @@ class SimpleObjectTest(unittest.TestCase):
         self.assertEqual(Pattern.HORIZONTAL_LINES.value, result_dict['pattern'])
         self.assertEqual(Color.GREEN.value, result_dict['pattern_color'])
         self.assertEqual(999, result_dict['id'])
-        json_symbols = json.loads(result_dict['symbols'])
-        symbols_dict = []
-        for json_symbol in json_symbols:
-            symbols_dict.append(json.loads(json_symbol))
+        symbols_dict = result_dict['symbols']
         self.assertEqual('Symbol', symbols_dict[0]['class'])
         self.assertEqual(Shape.ELLIPSE.value, symbols_dict[0]['shape'])
         self.assertEqual(Size.LARGE.value, symbols_dict[0]['width'])
@@ -223,10 +217,7 @@ class CombinedObjectTest(unittest.TestCase):
         self.assertEqual(Size.LARGE.value, result_dict['height'])
         self.assertEqual(None, result_dict['id'])
 
-        simple_objects_json = json.loads(result_dict['parts'])
-        simple_objects = []
-        for simple_object_json in simple_objects_json:
-            simple_objects.append(json.loads(simple_object_json))
+        simple_objects = result_dict['parts']
         self.assertEqual('SimpleObject', simple_objects[0]['class'])
         self.assertEqual(Shape.HEPTAGON.value, simple_objects[0]['shape'])
         self.assertEqual(Size.MEDIUM.value, simple_objects[0]['width'])
@@ -235,10 +226,7 @@ class CombinedObjectTest(unittest.TestCase):
         self.assertEqual(Pattern.HORIZONTAL_LINES.value, simple_objects[0]['pattern'])
         self.assertEqual(Color.GREEN.value, simple_objects[0]['pattern_color'])
         self.assertEqual(None, simple_objects[0]['id'])
-        json_symbols = json.loads(simple_objects[0]['symbols'])
-        symbols_dict = []
-        for json_symbol in json_symbols:
-            symbols_dict.append(json.loads(json_symbol))
+        symbols_dict = simple_objects[0]['symbols']
         self.assertEqual('Symbol', symbols_dict[0]['class'])
         self.assertEqual(Shape.ELLIPSE.value, symbols_dict[0]['shape'])
         self.assertEqual(Size.LARGE.value, symbols_dict[0]['width'])
@@ -256,10 +244,7 @@ class CombinedObjectTest(unittest.TestCase):
         self.assertEqual(Size.LARGE.value, result_dict['height'])
         self.assertEqual(999, result_dict['id'])
 
-        simple_objects_json = json.loads(result_dict['parts'])
-        simple_objects = []
-        for simple_object_json in simple_objects_json:
-            simple_objects.append(json.loads(simple_object_json))
+        simple_objects = result_dict['parts']
         self.assertEqual('SimpleObject', simple_objects[0]['class'])
         self.assertEqual(Shape.HEPTAGON.value, simple_objects[0]['shape'])
         self.assertEqual(Size.MEDIUM.value, simple_objects[0]['width'])
@@ -268,10 +253,8 @@ class CombinedObjectTest(unittest.TestCase):
         self.assertEqual(Pattern.HORIZONTAL_LINES.value, simple_objects[0]['pattern'])
         self.assertEqual(Color.GREEN.value, simple_objects[0]['pattern_color'])
         self.assertEqual(None, simple_objects[0]['id'])
-        json_symbols = json.loads(simple_objects[0]['symbols'])
-        symbols_dict = []
-        for json_symbol in json_symbols:
-            symbols_dict.append(json.loads(json_symbol))
+
+        symbols_dict = simple_objects[0]['symbols']
         self.assertEqual('Symbol', symbols_dict[0]['class'])
         self.assertEqual(Shape.ELLIPSE.value, symbols_dict[0]['shape'])
         self.assertEqual(Size.LARGE.value, symbols_dict[0]['width'])

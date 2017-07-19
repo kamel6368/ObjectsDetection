@@ -1,0 +1,9 @@
+INSERT INTO SYMBOL
+(
+  SHAPE,
+  WIDTH,
+  HEIGHT,
+  COLOR,
+  PARENTSIMPLEOBJECT
+)
+VALUES (?, ?, ?, ?, ?);
