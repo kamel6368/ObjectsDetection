@@ -5,4 +5,5 @@ unzip ObjectsDetection.zip
 rm ObjectsDetection.zip
 
 mv Common Agent/Common
+mv DataModel Agent/DataModel
 mv Agent ObjectsDetection

@@ -12,6 +12,7 @@ for /f "tokens=1,2 delims==" %%a in (RaspberryScripts/raspberry_params.txt) do (
 cd ..
 7z a deploy.zip Agent
 7z a deploy.zip Common
+7z a deploy.zip DataModel
 
 pscp -pw %raspberry_password% deploy.zip %raspberry_user%@%raspberry_ip%:ObjectsDetection.zip
 
