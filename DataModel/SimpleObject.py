@@ -15,22 +15,13 @@ class SimpleObject:
         self.symbols = symbols
         self.id = id
 
-    def quasi_equals(self, another):
-        are_equal = (self.shape == another.shape) or (self._is_triangle() and another._is_triangle())
-        are_equal = are_equal and self.color == another.color
-        are_equal = are_equal and self.height == another.height
-        are_equal = are_equal and self.width == another.width
-        are_equal = are_equal and self.pattern == another.pattern
-        are_equal = are_equal and self.pattern_color == another.pattern_color
-        are_equal = are_equal and len(self.symbols) == len(self.symbols)
-        if not are_equal:
-            return False
+    def quasi_equals(self, symbol):
+        are_equal = (self.shape == symbol.shape) or (self._is_triangle(self) and
+                                                      self._is_triangle(symbol))
+        are_equal = are_equal and self.color == symbol.color
+        are_equal = are_equal and self.height == symbol.height
+        are_equal = are_equal and self.width == symbol.width
 
-        if len(self.symbols) != len(another.symbols):
-            return False
-
-        for i in range(0, len(self.symbols)):
-            are_equal = are_equal and self.symbols[i].quasi_equals(another.symbols[i])
         return are_equal
 
     def to_string(self):
@@ -40,38 +31,38 @@ class SimpleObject:
             result += '\t' + symbol.to_string()
         return result
 
-    def _is_triangle(self):
-        return self.shape is enums.Shape.TRIANGLE or self.shape is enums.Shape.EQUILATERAL_TRIANGLE or \
-               self.shape is enums.Shape.ISOSCELES_TRIANGLE
+    @staticmethod
+    def _is_triangle(object):
+        return object.shape is enums.Shape.TRIANGLE or object.shape is enums.Shape.EQUILATERAL_TRIANGLE or \
+               object.shape is enums.Shape.ISOSCELES_TRIANGLE
 
     def serialize(self):
-        serialized_symbols = []
+        dictionary_symbols = []
         for symbol in self.symbols:
-            serialized_symbols.append(symbol.serialize())
-        return json.dumps({
-            'class': 'SimpleObject',
+            dictionary_symbols.append(symbol.to_dictionary())
+        result = json.dumps({
+            'class': SimpleObject.__name__,
             'shape': self.shape.value,
             'width': self.width.value,
             'height': self.height.value,
             'color': self.color.value,
             'pattern': self.pattern.value,
             'pattern_color': self.pattern_color.value,
-            'symbols': json.dumps(serialized_symbols),
+            'symbols': dictionary_symbols,
             'id': self.id
         })
+        return result
 
     @staticmethod
-    def deserialize(json_str):
-        if isinstance(json_str, dict):
-            dictionary = json_str
-        else:
-            dictionary = json.loads(json_str)
-        if dictionary['class'] != 'SimpleObject':
+    def deserialize(dictionary):
+        if isinstance(dictionary, str):
+            dictionary = json.loads(dictionary)
+        if dictionary['class'] != SimpleObject.__name__:
             raise ValueError('Given string is not serialized SimpleObject')
         symbols = []
-        serialized_symbols = dictionary['symbols']
-        for serialized_symbol in serialized_symbols:
-            symbols.append(Symbol.deserialize(serialized_symbol))
+        dictionary_symbols = dictionary['symbols']
+        for dictionary_symbol in dictionary_symbols:
+            symbols.append(Symbol.deserialize(json.dumps(dictionary_symbol)))
         return SimpleObject(dictionary['shape'],
                             dictionary['width'],
                             dictionary['height'],
@@ -80,3 +71,18 @@ class SimpleObject:
                             dictionary['pattern_color'],
                             symbols,
                             dictionary['id'])
+
+    def to_dictionary(self):
+        dict_symbols = []
+        for symbol in self.symbols:
+            dict_symbols.append(symbol.to_dictionary())
+        return {'class': SimpleObject.__name__,
+                'id': self.id,
+                'shape': self.shape.value,
+                'width': self.width.value,
+                'height': self.height.value,
+                'color': self.color.value,
+                'pattern': self.pattern.value,
+                'pattern_color': self.pattern_color.value,
+                'symbols': dict_symbols
+                }

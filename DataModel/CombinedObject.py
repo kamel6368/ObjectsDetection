@@ -12,30 +12,28 @@ class CombinedObject:
         self.id = id
 
     def serialize(self):
-        serialized_parts = []
+        dictionary_parts = []
         for part in self.parts:
-            serialized_parts.append(part.serialize())
+            dictionary_parts.append(part.to_dictionary())
         return json.dumps({
-            'class': 'CombinedObject',
+            'class': CombinedObject.__name__,
             'shape': self.shape.value,
             'width': self.width.value,
             'height': self.height.value,
-            'parts': json.dumps(serialized_parts),
+            'parts': dictionary_parts,
             'id': self.id
         })
 
     @staticmethod
-    def deserialize(json_str):
-        if isinstance(json_str, dict):
-            dictionary = json_str
-        else:
-            dictionary = json.loads(json_str)
-        if dictionary['class'] != 'CombinedObject':
+    def deserialize(dictionary):
+        if isinstance(dictionary, str):
+            dictionary = json.loads(dictionary)
+        if dictionary['class'] != CombinedObject.__name__:
             raise ValueError('Given string is not serialized CombinedObject')
-        serialized_parts = dictionary['parts']
+        dictionary_parts = dictionary['parts']
         parts = []
-        for serialized_part in serialized_parts:
-            parts.append(SimpleObject.deserialize(serialized_part))
+        for dictionary_part in dictionary_parts:
+            parts.append(SimpleObject.deserialize(json.dumps(dictionary_part)))
         return CombinedObject(dictionary['shape'],
                               dictionary['width'],
                               dictionary['height'],
