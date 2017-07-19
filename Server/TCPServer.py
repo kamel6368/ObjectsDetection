@@ -1,7 +1,7 @@
 import tasks
 import tasksGUI
 import ImageProcessing.ObjectDetector as object_detection
-from Common.image_serialization import image_from_string
+from Common.serialization import image_from_string
 from Common.TCPConnections import TCPServer as CommonTCPServer, TCPCommands
 
 
@@ -32,11 +32,17 @@ class TCPServer(CommonTCPServer):
         if image is None:
             self.logger.print_msg('TCPServer/handle_message/invalid image')
             return
+        quantizied_image = None
         if self.main.apply_quantization:
             quantizied_image = self.main.object_detector._prepare_image_for_detection(image)
+
+        objects = tasks.detect_objects(self.main.object_detector, image, quantizied_image)
+        tasks.draw_contours_on_image(self.main.object_detector, image)
+        if self.main.apply_quantization and quantizied_image is not None:
+            tasks.draw_contours_on_image(self.main.object_detector, quantizied_image)
             tasksGUI.update_quantization_image(self.main.main_layout, quantizied_image)
         tasksGUI.update_raw_image(self.main.main_layout, image)
-        objects = tasks.detect_objects(image, self.main.apply_quantization)
+        self.main.object_detector.clear_contours()
         tasks.send_detected_object_to_agent(objects, self.main.tcp_client)
 
     def _register_action(self):
