@@ -74,39 +74,3 @@ def extract_unified_objects(connection, calculate_similarity):
     final_object = connection[max_index]
     certainty_factor = matrix[max_index] / (connection_length - 1)
     return final_object, certainty_factor
-
-'''
-def extract_connections(frames):
-    connections = []
-    for frame_index in range(len(frames)):
-        for object_tuple in frames[frame_index]:
-            connection = _extract_connection_for_first_object(object_tuple[1], frame_index, frames)
-            connection.append(connection)
-    return connections
-
-
-def _extract_connection_for_first_object(single_object, initial_frame_index, frames):
-    connection = [single_object]
-    temp_object = single_object
-    for frame_index in range(initial_frame_index + 1, len(frames) - 1):
-        next_node = _find_descendant(temp_object, frames[frame_index])
-        if next_node is None:
-            continue
-        frames[frame_index].remove((temp_object, next_node))
-        connection.append(next_node)
-        temp_object = next_node
-    return connection
-
-
-def _find_descendant(single_object, frame):
-    if frame == []:
-        return None
-    descendant = None
-    current_index = 0
-    while current_index < len(frame) and descendant is None:
-        if frame[current_index][0] is single_object:
-            descendant = frame[current_index][1]
-        current_index += 1
-    return descendant
-'''
-
