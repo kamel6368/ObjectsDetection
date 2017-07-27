@@ -1,6 +1,6 @@
-import enums
 import json
 from Symbol import Symbol
+from enums import Shape, Color, Size, Pattern
 
 
 class SimpleObject:
@@ -33,42 +33,23 @@ class SimpleObject:
 
     @staticmethod
     def _is_triangle(object):
-        return object.shape is enums.Shape.TRIANGLE or object.shape is enums.Shape.EQUILATERAL_TRIANGLE or \
-               object.shape is enums.Shape.ISOSCELES_TRIANGLE
-
-    def serialize(self):
-        dictionary_symbols = []
-        for symbol in self.symbols:
-            dictionary_symbols.append(symbol.to_dictionary())
-        result = json.dumps({
-            'class': SimpleObject.__name__,
-            'shape': self.shape.value,
-            'width': self.width.value,
-            'height': self.height.value,
-            'color': self.color.value,
-            'pattern': self.pattern.value,
-            'pattern_color': self.pattern_color.value,
-            'symbols': dictionary_symbols,
-            'id': self.id
-        })
-        return result
+        return object.shape is Shape.TRIANGLE or object.shape is Shape.EQUILATERAL_TRIANGLE or \
+               object.shape is Shape.ISOSCELES_TRIANGLE
 
     @staticmethod
-    def deserialize(dictionary):
-        if isinstance(dictionary, str):
-            dictionary = json.loads(dictionary)
+    def from_dictionary(dictionary):
         if dictionary['class'] != SimpleObject.__name__:
             raise ValueError('Given string is not serialized SimpleObject')
         symbols = []
         dictionary_symbols = dictionary['symbols']
         for dictionary_symbol in dictionary_symbols:
-            symbols.append(Symbol.deserialize(json.dumps(dictionary_symbol)))
-        return SimpleObject(dictionary['shape'],
-                            dictionary['width'],
-                            dictionary['height'],
-                            dictionary['color'],
-                            dictionary['pattern'],
-                            dictionary['pattern_color'],
+            symbols.append(Symbol.from_dictionary(dictionary_symbol))
+        return SimpleObject(Shape(dictionary['shape']),
+                            Size(dictionary['width']),
+                            Size(dictionary['height']),
+                            Color(dictionary['color']),
+                            Pattern(dictionary['pattern']),
+                            Color(dictionary['pattern_color']),
                             symbols,
                             dictionary['id'])
 

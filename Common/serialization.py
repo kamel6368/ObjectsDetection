@@ -24,17 +24,18 @@ def image_from_string(string):
 def serialize_list_of_objects(objects):
     serialized_objects = []
     for object in objects:
-        serialized_objects.append(object.serialize())
+        serialized_objects.append(object.to_dictionary())
     result = json.dumps(serialized_objects)
     return result
 
 
 def deserialize_list_of_objects(json_str):
-    dictionary_objects = json.loads(json_str)
+    objects_str = json.loads(json_str)
     result = []
-    for dictionary_object in dictionary_objects:
+    for object_str in objects_str:
+        dictionary_object = object_str
         if dictionary_object['class'] == SimpleObject.__name__:
-            result.append(SimpleObject.deserialize(dictionary_object))
+            result.append(SimpleObject.from_dictionary(dictionary_object))
         elif dictionary_object['class'] == CombinedObject.__name__:
-            result.append(CombinedObject.deserialize(dictionary_object))
+            result.append(CombinedObject.from_dictionary(dictionary_object))
     return result
