@@ -1,6 +1,7 @@
 import tasks
 import database
-from Common.TCPConnections import TCPServer as CommonTCPServer, TCPCommands
+from Common.TCPConnections import TCPServer as CommonTCPServer, TCPCommands, StreamMode
+from VideoRecorder import VideoRecorder
 
 
 class TCPServer(CommonTCPServer):
@@ -16,7 +17,7 @@ class TCPServer(CommonTCPServer):
         elif command == TCPCommands.OBJECTS:
             self._objects_action(content)
         elif command == TCPCommands.STREAM_ON:
-            self._stream_on_action()
+            self._stream_on_action(content)
         elif command == TCPCommands.STREAM_OFF:
             self._stream_off_action()
         elif command == TCPCommands.SHUTDOWN:
@@ -39,14 +40,21 @@ class TCPServer(CommonTCPServer):
             image = tasks.take_picture(self.main.video_capture)
             tasks.send_image_to_remote_server(self.main.tcp_client, image)
 
-    def _stream_on_action(self):
+    def _stream_on_action(self, content):
+        stream_params = tasks.parse_stream_on_content(content)
         tasks.acknowledge_stream_start(self.main.tcp_client)
         self.main.is_stream_on = True
-        image = tasks.take_picture(self.main.video_capture)
-        tasks.send_image_to_remote_server(self.main.tcp_client, image)
+        if stream_params[0] == StreamMode.EACH_FRAME:
+            image = tasks.take_picture(self.main.video_capture)
+            tasks.send_image_to_remote_server(self.main.tcp_client, image)
+        elif stream_params[0] == StreamMode.VIDEO:
+            self.main.video_recorder = VideoRecorder(self.main, stream_params[1])
+            self.main.video_recorder.start()
 
     def _stream_off_action(self):
         self.main.is_stream_on = False
+        if self.main.video_recorder is not None:
+            self.main.video_recorder.interrupt()
         tasks.acknowledge_stream_stop(self.main.tcp_client)
 
     def _shutdown_action(self):

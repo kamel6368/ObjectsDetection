@@ -64,13 +64,20 @@
             id: previous_frame_button
             text: 'previous_frame'
             disabled: True
+            on_press: root._previous_frame_button_on_press()
           Button:
             id: next_frame_button
             text: 'next_frame'
             disabled: True
-        Label:
-          id: console
-          text: 'daf'
+            on_press: root._next_frame_button_on_press()
+        ScrollView:
+          Label:
+            id: console
+            text_size: self.width, None
+            size_hint_y: None
+            height: self.texture_size[1]
+            valign: 'top'
+            text: ''
 
     BoxLayout:
       orientation: 'horizontal'
@@ -88,9 +95,19 @@
           text: 'stream_mode'
         Spinner:
           id: stream_mode_spinner
-          text: 'every_frame'
-          values: ['every frame', 'video']
+          text: 'Each frame'
+          values: ['Each frame', 'Video']
           disabled: True
+          on_text: root._stream_mode_button_on_text()
+      BoxLayout:
+        orientation: 'vertical'
+        Label:
+          text: 'Video duration'
+        TextInput:
+          id: video_duration_text_input
+          text: '15'
+          disabled: True
+          input_filter: 'int'
       BoxLayout:
         orientation: 'vertical'
         Label:

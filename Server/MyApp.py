@@ -2,12 +2,14 @@ import tasks
 import ImageProcessing.parameters_loader as parameters_loader
 from kivy.app import App
 from kivy.lang.builder import Builder
+from collections import deque
 from MainLayout import MainLayout
 from Common.TCPConnections import TCPClient
 from TCPServer import TCPServer
 from Common.config import config
 from Common.Logger import Logger
 from ImageProcessing.ObjectDetector import ObjectDetector
+from Common.TCPConnections import StreamMode
 
 
 class MyApp(App):
@@ -23,6 +25,10 @@ class MyApp(App):
         self.single_image_mode = False
         self.apply_quantization = False
         self.object_detector = None
+        self.stream_mode = StreamMode.EACH_FRAME
+        self.video_buffer = deque([])
+        self.frames_buffer = deque([], maxlen=10)
+        self.current_frame = -1
         App.__init__(self)
 
     def build(self):

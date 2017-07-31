@@ -19,6 +19,7 @@ class Main:
         self.logger = None
         self.is_stream_on = False
         self.database_connection = None
+        self.video_recorder = None
 
     def start_tcp_server(self):
         receive_address = config('TCPConnection/receive_address')

@@ -1,6 +1,6 @@
 import database
 from Common.serialization import image_to_string
-from Common.TCPConnections import TCPCommands
+from Common.TCPConnections import TCPCommands, StreamMode
 from DataModel.SimpleObject import SimpleObject
 from DataModel.CombinedObject import CombinedObject
 from Common.serialization import deserialize_list_of_objects
@@ -50,3 +50,16 @@ def insert_objects_to_database(objects_str, connection):
             database.insert_simple_object(object, connection)
         elif isinstance(object, CombinedObject):
             database.insert_combined_object(object, connection)
+
+
+def parse_stream_on_content(content):
+    array = content.split(';')
+    stream_mode = StreamMode(int(array[0].split(':')[1]))
+    if stream_mode == StreamMode.VIDEO:
+        duration = float(array[1].split(':')[1])
+        return [stream_mode, duration]
+    return [stream_mode]
+
+
+def send_video_done_recording(tcp_client):
+    tcp_client.send(TCPCommands.VIDEO_DONE_RECORDING, '')

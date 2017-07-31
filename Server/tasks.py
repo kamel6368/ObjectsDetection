@@ -1,9 +1,9 @@
 import cv2
-import json
+import tasksGUI
 from Common.serialization import serialize_list_of_objects
 from DataModel.enums import Color
 from kivy.graphics.texture import Texture
-from Common.TCPConnections import TCPCommands
+from Common.TCPConnections import TCPCommands, StreamMode
 
 
 def try_reconnect_to_alive_agents(main, tcp_client):
@@ -44,8 +44,16 @@ def acknowledge_agent_shutdown(tcp_client):
     tcp_client.send(TCPCommands.SHUTDOWN_ACK_ACK, '')
 
 
-def start_stream(tcp_client):
-    tcp_client.send(TCPCommands.STREAM_ON, '')
+def start_stream(main, tcp_client, main_layout):
+    video_duration = main_layout.get_video_duration()
+    tcp_client.send(TCPCommands.STREAM_ON, prepare_content_for_stream_on(main.stream_mode, video_duration))
+
+
+def prepare_content_for_stream_on(stream_mode, duration):
+    content = 'STREAM_MODE:' + str(stream_mode.value)
+    if stream_mode == StreamMode.VIDEO:
+        content += ';DURATION:' + str(duration)
+    return content
 
 
 def stop_stream(tcp_client):
@@ -78,3 +86,40 @@ def draw_contours_on_image(object_detector, image):
         elif single_contour[0] is Color.VIOLET:
             draw_color = (188, 0, 105)
         cv2.drawContours(image, [single_contour[1]], -1, draw_color, 2)
+
+
+def change_stream_mode(main):
+    if main.stream_mode == StreamMode.VIDEO:
+        main.stream_mode = StreamMode.EACH_FRAME
+    elif main.stream_mode == StreamMode.EACH_FRAME:
+        main.stream_mode = StreamMode.VIDEO
+
+
+def image_action_stream_mode_each_frame(main, tcp_client, image):
+    quantizied_image = None
+    if main.apply_quantization:
+        quantizied_image = main.object_detector._prepare_image_for_detection(image)
+
+    objects = detect_objects(main.object_detector, image, quantizied_image)
+    draw_contours_on_image(main.object_detector, image)
+    if main.apply_quantization and quantizied_image is not None:
+        draw_contours_on_image(main.object_detector, quantizied_image)
+        tasksGUI.update_quantization_image(main.main_layout, quantizied_image)
+    tasksGUI.update_raw_image(main.main_layout, image)
+    objects_string = list_of_objects_to_string(objects)
+    tasksGUI.print_on_console(main.main_layout, objects_string)
+    main.frames_buffer.append((image, quantizied_image, objects_string))
+    main.object_detector.clear_contours()
+    send_detected_object_to_agent(objects, tcp_client)
+
+
+def image_action_stream_mode_video(image, video_buffer, main_layout):
+    video_buffer.append(image)
+    tasksGUI.update_raw_image(main_layout, image)
+
+
+def list_of_objects_to_string(objects):
+    result = ''
+    for object in objects:
+        result += object.to_string() + '\n'
+    return result

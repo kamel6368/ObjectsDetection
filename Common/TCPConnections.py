@@ -1,4 +1,5 @@
 import socket
+from enum import Enum
 from abc import ABCMeta, abstractmethod
 from threading import Thread
 from time import sleep
@@ -21,9 +22,20 @@ class TCPCommands:
     SHUTDOWN_ACK = 'SHUTDOWN_ACK'
     SHUTDOWN_ACK_ACK = 'SHUTDOWN_ACK_ACK'
     REMOTE_SERVER_BREAK_DOWN = 'REMOTE_SERVER_BREAK_DOWN'
+    VIDEO_DONE_RECORDING = 'VIDEO_DONE_RECORDING'
+
+
+class StreamMode(Enum):
+    EACH_FRAME = 0
+    VIDEO = 1
 
 
 class ClientShutdownException(Exception):
+    def __init__(self, message=None):
+        Exception.__init__(self, message)
+
+
+class InvalidMessageException(Exception):
     def __init__(self, message=None):
         Exception.__init__(self, message)
 
@@ -72,6 +84,8 @@ class TCPServer(Thread):
                 self.disconnect()
                 should_restart = True
                 continue
+            except InvalidMessageException:
+                continue
 
             if is_complete_message:
                 self.logger.print_msg('TCPServer/Received: ' + data)
@@ -115,10 +129,12 @@ class TCPServer(Thread):
                     self.logger.print_msg('TCPServer/Invalid chunk or message: ' + chunk)
                     if chunk == '':
                         raise ClientShutdownException()
-
-                    splitted = data.split('|')
-                    data = splitted[-4] + '|' + splitted[-3] + '|' + splitted[-2] + '|' + splitted[-1]
-                    msg_length = int(splitted[-4])
+                    try:
+                        splitted = data.split('|')
+                        data = splitted[-4] + '|' + splitted[-3] + '|' + splitted[-2] + '|' + splitted[-1]
+                        msg_length = int(splitted[-4])
+                    except:
+                        raise InvalidMessageException()
 
             if len(data) >= msg_length:
                 self.buffer = data[msg_length:]

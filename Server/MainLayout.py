@@ -55,6 +55,18 @@ class MainLayout(BoxLayout):
     def change_start_stop_stream_button_text(self, text):
         self.ids.start_stop_stream_button.text = text
 
+    def get_video_duration(self):
+        return int(self.ids.video_duration_text_input.text)
+
+    def enable_video_duration_text_input(self):
+        self.ids.video_duration_text_input.disabled = False
+
+    def disable_video_duration_text_input(self):
+        self.ids.video_duration_text_input.disabled = True
+
+    def print_on_console(self, text):
+        self.ids.console.text = text
+
     ############################################
     # buttons callbacks
     ############################################
@@ -70,3 +82,13 @@ class MainLayout(BoxLayout):
 
     def _apply_quantization_checkbox_on_state_change(self):
         tasks.change_quantization_state(self.main, self.ids.apply_quantization_checkbox.active)
+
+    def _stream_mode_button_on_text(self):
+        tasks.change_stream_mode(self.main)
+        tasksGUI.stream_mode_button_on_text(self.main, self)
+
+    def _previous_frame_button_on_press(self):
+        tasksGUI.previous_frame_button_on_press()
+
+    def _next_frame_button_on_press(self):
+        tasksGUI.next_frame_button_on_press()
