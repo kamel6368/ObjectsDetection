@@ -24,13 +24,6 @@ class SimpleObject:
 
         return are_equal
 
-    def to_string(self):
-        result = 'Shape: ' + str(self.color) + ' ' + str(self.shape) + ' ' + str(self.width) + ' ' + str(self.height) + ' ' + \
-                 str(self.pattern) + ' ' + str(self.pattern_color) + '\n'
-        for symbol in self.symbols:
-            result += '\t' + symbol.to_string()
-        return result
-
     @staticmethod
     def _is_triangle(object):
         return object.shape is Shape.TRIANGLE or object.shape is Shape.EQUILATERAL_TRIANGLE or \
@@ -67,3 +60,36 @@ class SimpleObject:
                 'pattern_color': self.pattern_color.value,
                 'symbols': dict_symbols
                 }
+
+    def to_string(self, one_line=False, separator=', '):
+        str_symbols = self._list_of_symbols_to_string(one_line, separator)
+
+        parts = [
+            'Simple Object',
+            'Shape - ' + str(self.shape).split('.')[1],
+            'Color - ' + str(self.color).split('.')[1],
+            'Width - ' + str(self.width).split('.')[1],
+            'Height - ' + str(self.height).split('.')[1],
+            'Pattern - ' + str(self.pattern).split('.')[1],
+            'Pattern Color - ' + str(self.pattern_color).split('.')[1],
+            str_symbols
+        ]
+        if one_line:
+            return ''.join([p + separator for p in parts])[:-2]
+        else:
+            return '\n'.join(parts)
+
+    def _list_of_symbols_to_string(self, one_line, separator):
+        if self.symbols == []:
+            return 'Symbols: None'
+        str_symbols = 'Symbols: [' if one_line else 'Symbols:\n'
+        if one_line:
+            for symbol in self.symbols:
+                str_symbols += '(' + symbol.to_string(one_line=True, separator=separator) + '), '
+            str_symbols = str_symbols[:-2] + ']'
+        else:
+            for symbol in self.symbols:
+                str_symbols += symbol.to_string(one_line=False) + '\n\n'
+            str_symbols = str_symbols[:-2]
+            str_symbols = '\t'.join(str_symbols.splitlines(True))
+        return str_symbols

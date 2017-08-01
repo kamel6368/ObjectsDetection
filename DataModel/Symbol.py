@@ -29,3 +29,14 @@ class Symbol:
                 'height': self.height.value,
                 'color': self.color.value
                 }
+
+    def to_string(self, one_line=False, separator=', '):
+        str_parts = [
+            'Symbol',
+            'Shape - ' + str(self.shape).split('.')[1],
+            'Color - ' + str(self.color).split('.')[1],
+            'Width - ' + str(self.width).split('.')[1],
+            'Height - ' + str(self.height).split('.')[1]]
+        if one_line:
+            return ''.join([p + separator for p in str_parts])[:-2]
+        return ''.join([p + '\n' for p in str_parts])[:-1]

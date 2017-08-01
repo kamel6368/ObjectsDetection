@@ -11,7 +11,7 @@ class SymbolTest(unittest.TestCase):
     def setUp(self):
         self.symbol = Symbol(Shape.ELLIPSE, Size.LARGE, Size.MEDIUM, Color.GREEN)
 
-    def test_serialize_should_return_json_id_none(self):
+    def test_to_dictionary_should_return_json_id_none(self):
         result_dict = self.symbol.to_dictionary()
         self.assertEqual('Symbol', result_dict['class'])
         self.assertEqual(Shape.ELLIPSE.value, result_dict['shape'])
@@ -30,7 +30,7 @@ class SymbolTest(unittest.TestCase):
         self.assertEqual(Color.GREEN.value, result_dict['color'])
         self.assertEqual(3, result_dict['id'])
 
-    def test_deserialize_should_return_symbol_object_id_none(self):
+    def test_from_dictionary_should_return_symbol_object_id_none(self):
         symbol_json = {"class":"Symbol", "shape":1, "width":2, "height":3, "color":4, "id":None}
         result_symbol = Symbol.from_dictionary(symbol_json)
         self.assertEqual(Shape(1), result_symbol.shape)
@@ -39,7 +39,7 @@ class SymbolTest(unittest.TestCase):
         self.assertEqual(Color(4), result_symbol.color)
         self.assertEqual(None, result_symbol.id)
 
-    def test_deserialize_should_return_symbol_object_id_not_none(self):
+    def test_from_dictionary_should_return_symbol_object_id_not_none(self):
         symbol_json = {"class":"Symbol", "shape":1, "width":2, "height":3, "color":4, "id":5}
         result_symbol = Symbol.from_dictionary(symbol_json)
         self.assertEqual(Shape(1), result_symbol.shape)
@@ -48,9 +48,25 @@ class SymbolTest(unittest.TestCase):
         self.assertEqual(Color(4), result_symbol.color)
         self.assertEqual(5, result_symbol.id)
 
-    def test_deserialize_should_raise_exception_invalid_json(self):
+    def test_from_dictionary_should_raise_exception_invalid_json(self):
         symbol_json = {"class":"Symbol", "shape":1, "width":2, "height":3, "color":4}
         self.assertRaises(Exception, Symbol.from_dictionary, symbol_json)
+
+    def test_to_string_should_return_valid_one_line_string(self):
+        result = self.symbol.to_string(one_line=True, separator=', ')
+        expected_string = 'Symbol, Shape - ELLIPSE, Color - GREEN, Width - LARGE, Height - MEDIUM'
+        self.assertEqual(expected_string, result)
+
+    def test_to_string_should_return_valid_multi_line_string(self):
+        result = self.symbol.to_string(one_line=False)
+        expected_string = \
+            'Symbol\n' + \
+            'Shape - ELLIPSE\n' + \
+            'Color - GREEN\n' + \
+            'Width - LARGE\n' + \
+            'Height - MEDIUM'
+
+        self.assertEqual(expected_string, result)
 
 
 class SimpleObjectTest(unittest.TestCase):
@@ -190,6 +206,43 @@ class SimpleObjectTest(unittest.TestCase):
     def test_from_dictionary_should_raise_exception_invalid_json(self):
         simple_object_json = '{"class":"SimpleObject","shape":1,"width":2,"height":3,"color":4,"pattern":5,"id":5,"symbols":[{"class":"Symbol", "shape":1, "width":2, "height":3,"color":4, "id":None},{"class":"Symbol", "shape":6, "width":7,"height":8, "color":9, "id":None},{"class":"Symbol", "shape":13,"width":12, "height":11, "color":10, "id":None}]}'
         self.assertRaises(Exception, Symbol.from_dictionary, simple_object_json)
+
+    def test_to_sting_should_return_valid_one_line_string(self):
+        result = self.simple_object.to_string(one_line=True, separator=', ')
+        expected_string = 'Simple Object, Shape - HEPTAGON, Color - YELLOW, Width - MEDIUM, Height - BIG, Pattern - HORIZONTAL_LINES, Pattern Color - GREEN, Symbols: [(Symbol, Shape - ELLIPSE, Color - GREEN, Width - LARGE, Height - MEDIUM), (Symbol, Shape - CIRCLE, Color - BLUE, Width - BIG, Height - SMALL), (Symbol, Shape - HEXAGON, Color - YELLOW, Width - MEDIUM, Height - MEDIUM)]'
+        self.assertEqual(expected_string, result)
+
+    def test_to_string_should_return_valid_multi_line_string(self):
+        result = self.simple_object.to_string(one_line=False)
+        expected_string = \
+            'Simple Object\n' + \
+            'Shape - HEPTAGON\n' + \
+            'Color - YELLOW\n' + \
+            'Width - MEDIUM\n' + \
+            'Height - BIG\n' + \
+            'Pattern - HORIZONTAL_LINES\n' + \
+            'Pattern Color - GREEN\n' + \
+            'Symbols:\n' + \
+                '\tSymbol\n' + \
+                '\tShape - ELLIPSE\n' + \
+                '\tColor - GREEN\n' + \
+                '\tWidth - LARGE\n' + \
+                '\tHeight - MEDIUM\n' + \
+                '\t\n' + \
+                '\tSymbol\n' + \
+                '\tShape - CIRCLE\n' + \
+                '\tColor - BLUE\n' + \
+                '\tWidth - BIG\n' + \
+                '\tHeight - SMALL\n' + \
+                '\t\n' + \
+                '\tSymbol\n' + \
+                '\tShape - HEXAGON\n' + \
+                '\tColor - YELLOW\n' + \
+                '\tWidth - MEDIUM\n' + \
+                '\tHeight - MEDIUM'
+
+        print result
+        self.assertEqual(expected_string, result)
 
 
 class CombinedObjectTest(unittest.TestCase):
@@ -379,3 +432,45 @@ class CombinedObjectTest(unittest.TestCase):
     def test_from_dictionary_should_raise_exception_invalid_json(self):
         combined_object_json = '{"class":"CombinedObject","shape":1,"width":2,"height":3,"id":999,"parts":[{"class":"SimpleObject","width":2,"height":3,"color":4,"pattern":5,"pattern_color":6,"id":None,"symbols":[{"class":"Symbol", "shape":1, "width":2, "height":3,"color":4, "id":None},{"class":"Symbol", "shape":6, "width":7,"height":8, "color":9, "id":None},{"class":"Symbol", "shape":13,"width":12, "height":11, "color":10, "id":None}]},{"class":"SimpleObject","shape":1,"width":2,"height":3,"color":4,"pattern":5,"pattern_color":6,"id":None,"symbols":[{"class":"Symbol", "shape":1, "width":2, "height":3,"color":4, "id":None},{"class":"Symbol", "shape":6, "width":7,"height":8, "color":9, "id":None},{"class":"Symbol", "shape":13,"width":12, "height":11, "color":10, "id":None}]}]}'
         self.assertRaises(Exception, Symbol.from_dictionary, combined_object_json)
+
+    def test_to_sting_should_return_valid_one_line_string(self):
+        self.combined_object.parts.append(SimpleObject(
+            Shape.CIRCLE, Size.LARGE, Size.TINY, Color.BLUE, Pattern.LEFT_INCLINED_LINES, Color.NONE, []))
+        result = self.combined_object.to_string(one_line=True, separator=', ')
+        expected_string = 'Combined Object, Shape - RECTANGLE, Width - MEDIUM, Height - LARGE, Parts: [(Simple Object, Shape - HEPTAGON, Color - YELLOW, Width - MEDIUM, Height - BIG, Pattern - HORIZONTAL_LINES, Pattern Color - GREEN, Symbols: [(Symbol, Shape - ELLIPSE, Color - GREEN, Width - LARGE, Height - MEDIUM)]), (Simple Object, Shape - CIRCLE, Color - BLUE, Width - LARGE, Height - TINY, Pattern - LEFT_INCLINED_LINES, Pattern Color - NONE, Symbols: None)]'
+        self.assertEqual(expected_string, result)
+
+    def test_to_string_should_return_valid_multi_line_string(self):
+        self.combined_object.parts.append(SimpleObject(
+            Shape.CIRCLE, Size.LARGE, Size.TINY, Color.BLUE, Pattern.LEFT_INCLINED_LINES, Color.NONE, []))
+        result = self.combined_object.to_string(one_line=False)
+        expected_string = \
+            'Combined Object\n' + \
+            'Shape - RECTANGLE\n' + \
+            'Width - MEDIUM\n' + \
+            'Height - LARGE\n' + \
+            'Parts:\n' + \
+                '\tSimple Object\n' + \
+                '\tShape - HEPTAGON\n' + \
+                '\tColor - YELLOW\n' + \
+                '\tWidth - MEDIUM\n' + \
+                '\tHeight - BIG\n' + \
+                '\tPattern - HORIZONTAL_LINES\n' + \
+                '\tPattern Color - GREEN\n' + \
+                '\tSymbols:\n' + \
+                    '\t\tSymbol\n' + \
+                    '\t\tShape - ELLIPSE\n' + \
+                    '\t\tColor - GREEN\n' + \
+                    '\t\tWidth - LARGE\n' + \
+                    '\t\tHeight - MEDIUM\n' + \
+                '\t\n' + \
+                '\tSimple Object\n' + \
+                '\tShape - CIRCLE\n' + \
+                '\tColor - BLUE\n' + \
+                '\tWidth - LARGE\n' + \
+                '\tHeight - TINY\n' + \
+                '\tPattern - LEFT_INCLINED_LINES\n' + \
+                '\tPattern Color - NONE\n' + \
+                '\tSymbols: None'
+        print result
+        self.assertEqual(expected_string, result)
