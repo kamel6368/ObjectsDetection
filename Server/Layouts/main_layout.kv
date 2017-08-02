@@ -70,6 +70,16 @@
             text: 'next_frame'
             disabled: True
             on_press: root._next_frame_button_on_press()
+        BoxLayout:
+          size_hint: 1, None
+          height: 50
+          orientation: 'horizontal'
+          Label:
+            text: 'Show only unified objects'
+          CheckBox:
+            id: show_only_unified_objects_checkbox
+            disabled: True
+            on_active: root._show_only_unified_objects_checkbox()
         ScrollView:
           Label:
             id: console
@@ -105,8 +115,9 @@
           text: 'Video duration'
         TextInput:
           id: video_duration_text_input
-          text: '15'
+          text: '3'
           disabled: True
+          focus: False
           input_filter: 'int'
       BoxLayout:
         orientation: 'vertical'

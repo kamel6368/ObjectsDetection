@@ -1,5 +1,6 @@
 import tasks
 import tasksGUI
+from kivy.clock import mainthread
 from kivy.uix.boxlayout import BoxLayout
 
 
@@ -62,10 +63,29 @@ class MainLayout(BoxLayout):
         self.ids.video_duration_text_input.disabled = False
 
     def disable_video_duration_text_input(self):
+        self.ids.video_duration_text_input.focus = False
         self.ids.video_duration_text_input.disabled = True
 
     def print_on_console(self, text):
         self.ids.console.text = text
+
+    def enable_next_frame_button(self):
+        self.ids.next_frame_button.disabled = False
+
+    def disable_next_frame_button(self):
+        self.ids.next_frame_button.disabled = True
+
+    def enable_previous_frame_button(self):
+        self.ids.previous_frame_button.disabled = False
+
+    def disable_previous_frame_button(self):
+        self.ids.previous_frame_button.disabled = True
+
+    def enable_show_only_unified_objects_checkbox(self):
+        self.ids.show_only_unified_objects_checkbox.disabled = False
+
+    def disable_show_only_unified_objects_checkbox(self):
+        self.ids.show_only_unified_objects_checkbox.disabled = True
 
     ############################################
     # buttons callbacks
@@ -88,7 +108,10 @@ class MainLayout(BoxLayout):
         tasksGUI.stream_mode_button_on_text(self.main, self)
 
     def _previous_frame_button_on_press(self):
-        tasksGUI.previous_frame_button_on_press()
+        tasksGUI.previous_frame_button_on_press(self.main, self.main.main_layout)
 
     def _next_frame_button_on_press(self):
-        tasksGUI.next_frame_button_on_press()
+        tasksGUI.next_frame_button_on_press(self.main, self.main.main_layout)
+
+    def _show_only_unified_objects_checkbox(self):
+        tasksGUI.show_only_unified_objects_checkbox(self.main, self.main.main_layout)
