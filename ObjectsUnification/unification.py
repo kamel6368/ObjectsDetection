@@ -2,7 +2,18 @@ import copy
 import numpy as np
 
 
-def unify_objects(frames, calculate_similarity, min_similarity_factor=0.5, work_on_copy=False):
+class ObjectsUnificator:
+
+    def __init__(self):
+        self.calculate_similarity_function = None
+        self.min_similarity_factor = None
+        self.work_on_copy = None
+
+    def unify_objects(self, frames):
+        unify_objects(frames, self.calculate_similarity_function, self.min_similarity_factor, self.work_on_copy)
+
+
+def unify_objects(frames, calculate_similarity, min_similarity_factor=0.5, work_on_copy=True):
     if work_on_copy:
         frames = copy.deepcopy(frames)
     prepare_frames(frames)
@@ -10,7 +21,8 @@ def unify_objects(frames, calculate_similarity, min_similarity_factor=0.5, work_
     connections = []
     for frame_index in range(0, len(frames)-1):
         for object_pair in frames[frame_index]:
-            connection = create_object_connection(object_pair[1], frame_index, frames, min_similarity_factor, calculate_similarity)
+            connection = create_object_connection(object_pair[1], frame_index, frames, min_similarity_factor,
+                                                  calculate_similarity)
             if len(connection) > 1:
                 connections.append(connection)
 
@@ -58,6 +70,8 @@ def find_next_node(single_object, next_frame, calculate_similarity):
         if node_similarity_factor > similarity_factor:
             next_node_index = index
             similarity_factor = node_similarity_factor
+    if next_node_index is None:
+        return None, None, None
     return next_frame[next_node_index], next_node_index, similarity_factor
 
 

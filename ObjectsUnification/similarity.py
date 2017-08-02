@@ -5,8 +5,24 @@ from DataModel.SimpleObject import SimpleObject
 from DataModel.CombinedObject import CombinedObject
 
 
+class SimilarityCalculator:
+
+    def __init__(self):
+        self.color_weight = None
+        self.shape_weight = None
+        self.size_weight = None
+        self.pattern_weight = None
+        self.symbols_weight = None
+        self.parts_weight = None
+
+    def calculate(self, object_1, object_2):
+        return calculate_objects_similarity(object_1, object_2, self.color_weight, self.shape_weight, self.size_weight,
+                                            self.pattern_weight, self.symbols_weight, self.parts_weight)
+
+
 def calculate_objects_similarity(object_1, object_2, color_weight, shape_weight, size_weight,
-                                 pattern_weight, symbols_weight):
+                                 pattern_weight, symbols_weight, parts_weight):
+
     if isinstance(object_1, SimpleObject) and isinstance(object_2, SimpleObject):
         return calculate_simple_object_to_simple_object_similarity(
             object_1,
@@ -16,8 +32,17 @@ def calculate_objects_similarity(object_1, object_2, color_weight, shape_weight,
             size_weight,
             pattern_weight,
             symbols_weight)
+
     if isinstance(object_1, CombinedObject) and isinstance(object_2, CombinedObject):
-        return calculate_combine_object_to_combined_object_similarity()
+        return calculate_combine_object_to_combined_object_similarity(object_1, object_2, color_weight, shape_weight,
+                                                                      size_weight, pattern_weight, parts_weight,
+                                                                      symbols_weight)
+
+    if isinstance(object_1, SimpleObject) and isinstance(object_2, CombinedObject):
+        return calculate_simple_object_to_combined_object_similarity(simple_object=object_1, combined_object=object_2)
+
+    if isinstance(object_1, CombinedObject) and isinstance(object_2, SimpleObject):
+        return calculate_simple_object_to_combined_object_similarity(simple_object=object_2, combined_object=object_1)
 
 
 def calculate_combine_object_to_combined_object_similarity(object_1, object_2, color_weight, shape_weight, size_weight,
@@ -61,6 +86,8 @@ def calculate_simple_object_to_simple_object_similarity(object_1, object_2, colo
 
 
 def calculate_list_similarity(list_1, list_2, color_weight, shape_weight, size_weight, pattern_weight, symbols_weight):
+    if len(list_1) == 0 or len(list_2) == 0:
+        return 0.0
     # if list_1 and list_2 have different length than list_2 should be the one that is longer
     if len(list_1) > len(list_2):
         temp = list_1
