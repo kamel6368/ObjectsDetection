@@ -5,11 +5,11 @@ from DataModel.Symbol import Symbol
 from DataModel.SimpleObject import SimpleObject
 from DataModel.CombinedObject import CombinedObject
 
+
 # Those should be treated as smoke tests.
 
 
 class SimilarityTest(TestCase):
-
     def test_color_similarity(self):
         color_similarity = similarity.calculate_colors_similarity(Color.RED, Color.RED)
         self.assertEqual(1, color_similarity)
@@ -47,9 +47,11 @@ class SimilarityTest(TestCase):
         self.assertEqual(0, size_similarity)
 
     def test_pattern_similarity(self):
-        pattern_similarity = similarity.calculate_pattern_similarity(Pattern.RIGHT_INCLINED_LINES, Pattern.RIGHT_INCLINED_LINES)
+        pattern_similarity = similarity.calculate_pattern_similarity(Pattern.RIGHT_INCLINED_LINES,
+                                                                     Pattern.RIGHT_INCLINED_LINES)
         self.assertEqual(1, pattern_similarity)
-        pattern_similarity = similarity.calculate_pattern_similarity(Pattern.RIGHT_INCLINED_LINES, Pattern.HORIZONTAL_LINES)
+        pattern_similarity = similarity.calculate_pattern_similarity(Pattern.RIGHT_INCLINED_LINES,
+                                                                     Pattern.HORIZONTAL_LINES)
         self.assertTrue(0 < pattern_similarity < 1)
         pattern_similarity = similarity.calculate_pattern_similarity(Pattern.NONE, Pattern.HORIZONTAL_LINES)
         self.assertEqual(0, pattern_similarity)
@@ -192,22 +194,51 @@ class SimilarityTest(TestCase):
                                                                           parts_weight=1.0,
                                                                           symbols_weight=1.0)
 
+    def test_calculate_objects_similarity_should_return_according_to_objects_type(self):
+        symbols = [Symbol(Shape.HEPTAGON, Size.LARGE, Size.LARGE, Color.GREEN),
+                   Symbol(Shape.CIRCLE, Size.SMALL, Size.TINY, Color.VIOLET),
+                   Symbol(Shape.KITE, Size.MEDIUM, Size.MEDIUM, Color.RED)]
+        simple_objects = [SimpleObject(Shape.RECTANGLE, Size.MEDIUM, Size.SMALL, Color.YELLOW,
+                                       Pattern.HORIZONTAL_LINES, Color.GREEN, symbols)]
+        combined_object = CombinedObject(Shape.PENTAGON, Size.MEDIUM, Size.MEDIUM, simple_objects)
+        simple_object = simple_objects[0]
 
+        result = similarity.calculate_objects_similarity(simple_object,
+                                                         simple_object,
+                                                         color_weight=1.0,
+                                                         shape_weight=1.0,
+                                                         size_weight=1.0,
+                                                         pattern_weight=1.0,
+                                                         parts_weight=1.0,
+                                                         symbols_weight=1.0)
+        self.assertEqual(1.0, result)
 
+        result = similarity.calculate_objects_similarity(combined_object,
+                                                         combined_object,
+                                                         color_weight=1.0,
+                                                         shape_weight=1.0,
+                                                         size_weight=1.0,
+                                                         pattern_weight=1.0,
+                                                         parts_weight=1.0,
+                                                         symbols_weight=1.0)
+        self.assertEqual(1.0, result)
 
+        result = similarity.calculate_objects_similarity(simple_object,
+                                                         combined_object,
+                                                         color_weight=1.0,
+                                                         shape_weight=1.0,
+                                                         size_weight=1.0,
+                                                         pattern_weight=1.0,
+                                                         parts_weight=1.0,
+                                                         symbols_weight=1.0)
+        self.assertEqual(0, result)
 
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
+        result = similarity.calculate_objects_similarity(combined_object,
+                                                         simple_object,
+                                                         color_weight=1.0,
+                                                         shape_weight=1.0,
+                                                         size_weight=1.0,
+                                                         pattern_weight=1.0,
+                                                         parts_weight=1.0,
+                                                         symbols_weight=1.0)
+        self.assertEqual(0, result)

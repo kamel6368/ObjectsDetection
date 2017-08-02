@@ -1,5 +1,6 @@
 import cv2
 import tasksGUI
+from collections import deque
 from Common.serialization import serialize_list_of_objects
 from DataModel.enums import Color
 from kivy.graphics.texture import Texture
@@ -45,6 +46,8 @@ def acknowledge_agent_shutdown(tcp_client):
 
 
 def start_stream(main, tcp_client, main_layout):
+    if main.stream_mode == StreamMode.VIDEO:
+        clear_video_buffer(main)
     video_duration = main_layout.get_video_duration()
     tcp_client.send(TCPCommands.STREAM_ON, prepare_content_for_stream_on(main.stream_mode, video_duration))
 
@@ -108,7 +111,7 @@ def image_action_stream_mode_each_frame(main, tcp_client, image):
     tasksGUI.update_raw_image(main.main_layout, image)
     objects_string = list_of_objects_to_string(objects)
     tasksGUI.print_on_console(main.main_layout, objects_string)
-    main.frames_buffer.append((image, quantizied_image, objects_string))
+    main.frames_buffer.append([image, quantizied_image, objects_string])
     main.object_detector.clear_contours()
     send_detected_object_to_agent(objects, tcp_client)
 
@@ -123,3 +126,39 @@ def list_of_objects_to_string(objects):
     for object in objects:
         result += object.to_string() + '\n'
     return result
+
+
+def extract_objects_from_video(video_buffer, apply_quantization, object_detector, objects_unificator,
+                               main, main_layout):
+    objects_each_frame = []
+    for frame_index in range(len(video_buffer)):
+        raw_frame = video_buffer[frame_index]
+        quantizied_frame = None
+        if apply_quantization:
+            quantizied_frame = object_detector._prepare_image_for_detection(raw_frame)
+
+        detected_objects = detect_objects(object_detector, raw_frame, quantizied_frame)
+        objects_each_frame.append(detected_objects)
+        draw_contours_on_image(object_detector, raw_frame)
+        if quantizied_frame is not None:
+            draw_contours_on_image(object_detector, quantizied_frame)
+
+        objects_str = list_of_objects_to_string(detected_objects)
+        main.video_buffer[frame_index] = [raw_frame, quantizied_frame, objects_str]
+
+        tasksGUI.update_raw_image(main_layout, raw_frame)
+        if quantizied_frame is not None:
+            tasksGUI.update_quantization_image(main_layout, quantizied_frame)
+        tasksGUI.print_on_console(main_layout, objects_str)
+        object_detector.clear_contours()
+    unified_objects = objects_unificator.unify_objects(objects_each_frame)
+    main.unified_objects = unified_objects
+
+
+def clear_frames_buffer(main):
+    main.frames_buffer.clear()
+
+
+def clear_video_buffer(main):
+    main.video_buffer.clear()
+

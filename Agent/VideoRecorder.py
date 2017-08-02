@@ -1,6 +1,6 @@
 import tasks
 from threading import Thread
-from time import time
+from time import time, sleep
 from Common.config import config
 
 
@@ -27,6 +27,7 @@ class VideoRecorder(Thread):
 
     def release(self):
         self.main.video_recorder = None
+        sleep(1)  # this sleep is needed to ensure that last picture is send correctly
         tasks.send_video_done_recording(self.main.tcp_client)
 
     def interrupt(self):

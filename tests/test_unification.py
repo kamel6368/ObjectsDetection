@@ -69,7 +69,8 @@ class UnificationTest(TestCase):
             return 0.4
 
     def test_unify_object_should_return_non_empty_list_of_objects(self):
-        result = unification.unify_objects(self.frames, self.calculate_similarity)
+        result = unification.unify_objects(self.frames, self.calculate_similarity, min_similarity_factor=0.5,
+                                           work_on_copy=True)
         objects = [obj[0] for obj in result]
         certainty_factors = [obj[1] for obj in result]
 
@@ -84,5 +85,10 @@ class UnificationTest(TestCase):
 
         self.assertTrue('obj25' in objects)
         self.assertAlmostEqual(0.9, certainty_factors[objects.index('obj25')], places=3)
+
+    def test_unify_object_should_return_empty_list(self):
+        result = unification.unify_objects([], self.calculate_similarity, min_similarity_factor=0.5,
+                                           work_on_copy=True)
+        self.assertEqual([], result)
 
 

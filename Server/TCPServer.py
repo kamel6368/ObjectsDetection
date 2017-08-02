@@ -52,14 +52,25 @@ class TCPServer(CommonTCPServer):
         self.main.is_stream_on = True
         tasksGUI.update_gui_after_stream_on(self.main, self.main.main_layout)
         if self.main.stream_mode == StreamMode.EACH_FRAME:
-            self.main.frames_buffer.clear()
+            tasks.clear_frames_buffer(self.main)
 
     def _stream_off_ack_action(self):
         self.main.is_stream_on = False
-        tasksGUI.update_gui_after_stream_off(self.main, self.main.main_layout)
-        if self.main.stream_mode == StreamMode.VIDEO:
-            self.main.video_buffer = deque([])
 
+        if self.main.stream_mode == StreamMode.VIDEO:
+            tasks.clear_video_buffer(self.main)
+            enable_frames_switching = False
+        elif self.main.stream_mode == StreamMode.EACH_FRAME:
+            self.main.current_frame_index = len(self.main.frames_buffer) - 1
+            enable_frames_switching = True
+
+        tasksGUI.update_gui_after_stream_off(self.main, self.main.main_layout, enable_frames_switching)
 
     def _video_done_recording_action(self):
-        self._stream_off_ack_action()
+        self.main.is_stream_on = False
+        tasks.extract_objects_from_video(self.main.video_buffer, self.main.apply_quantization,
+                                         self.main.object_detector, self.main.objects_unificator, self.main,
+                                         self.main.main_layout)
+        tasksGUI.update_gui_after_stream_off(self.main, self.main.main_layout, True)
+        self.main.current_frame_index = len(self.main.video_buffer) - 1
+

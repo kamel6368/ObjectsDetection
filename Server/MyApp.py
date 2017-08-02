@@ -1,4 +1,5 @@
 import tasks
+import configurable_objects_factory
 import ImageProcessing.parameters_loader as parameters_loader
 from kivy.app import App
 from kivy.lang.builder import Builder
@@ -27,8 +28,10 @@ class MyApp(App):
         self.object_detector = None
         self.stream_mode = StreamMode.EACH_FRAME
         self.video_buffer = deque([])
-        self.frames_buffer = deque([], maxlen=10)
-        self.current_frame = -1
+        self.frames_buffer_size = 10
+        self.frames_buffer = deque([], maxlen=self.frames_buffer_size)
+        self.current_frame_index = -1
+        self.objects_unificator = None
         App.__init__(self)
 
     def build(self):
@@ -58,6 +61,7 @@ class MyApp(App):
         self.start_tcp_server()
 
         self.object_detector = ObjectDetector()
+        self.objects_unificator = configurable_objects_factory.create_objects_unificator()
         parameters_loader.load_all_from_file(self.object_detector)
 
     def on_stop(self):
