@@ -6,5 +6,6 @@ similarity:
   size_weight: 1.0
   symbols_weight: 1.0
 unification:
+  min_connection_length_percentage: 0.25
   min_similarity_factor: 0.75
   work_on_copy: true

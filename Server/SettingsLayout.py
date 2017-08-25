@@ -196,6 +196,7 @@ class UnificationSettingsLayout(ScrollView):
         self.ids.symbols_weight_form.value = str(yaml['similarity']['symbols_weight'])
         self.ids.parts_weight_form.value = str(yaml['similarity']['parts_weight'])
         self.ids.min_similarity_factor_form.value = str(yaml['unification']['min_similarity_factor'])
+        self.ids.min_connection_length_percentage_form.value = str(yaml['unification']['min_connection_length_percentage'])
         self.ids.work_on_copy_form.value = str(yaml['unification']['work_on_copy'])
 
     def create_yaml(self):
@@ -210,6 +211,7 @@ class UnificationSettingsLayout(ScrollView):
             },
             'unification': {
                 'min_similarity_factor': float(self.ids.min_similarity_factor_form.value),
+                'min_connection_length_percentage': float(self.ids.min_connection_length_percentage_form.value),
                 'work_on_copy': True if self.ids.work_on_copy_form.value == 'True' else False
             }
         }

@@ -7,13 +7,16 @@ class ObjectsUnificator:
     def __init__(self):
         self.calculate_similarity_function = None
         self.min_similarity_factor = None
+        self.min_connection_length_percentage = None
         self.work_on_copy = None
 
     def unify_objects(self, frames):
-        unify_objects(frames, self.calculate_similarity_function, self.min_similarity_factor, self.work_on_copy)
+        return unify_objects(frames, self.calculate_similarity_function, self.min_similarity_factor,
+                             self.min_connection_length_percentage, self.work_on_copy)
 
 
-def unify_objects(frames, calculate_similarity, min_similarity_factor=0.5, work_on_copy=True):
+def unify_objects(frames, calculate_similarity, min_similarity_factor=0.5,
+                  min_connection_length_percentage=0.5, work_on_copy=True):
     if work_on_copy:
         frames = copy.deepcopy(frames)
     prepare_frames(frames)
@@ -28,7 +31,9 @@ def unify_objects(frames, calculate_similarity, min_similarity_factor=0.5, work_
 
     objects = []
     for connection in connections:
-        objects.append(extract_unified_objects(connection, calculate_similarity))
+        percentage_length = float(len(connection)) / len(frames)
+        if percentage_length >= min_connection_length_percentage:
+            objects.append(extract_unified_objects(connection, calculate_similarity))
     return objects
 
 
@@ -54,7 +59,6 @@ def create_object_connection(object, current_frame_index, frames, min_similarity
                 continue
 
         next_node[0] = object
-        object = next_node[1]
         connection.append(next_node[1])
     return connection
 
@@ -65,6 +69,8 @@ def find_next_node(single_object, next_frame, calculate_similarity):
     next_node_index = None
     similarity_factor = 0
     for index in range(0, len(next_frame)):
+        if next_frame[index][0] is not None:
+            continue
         next_single_object = next_frame[index][1]
         node_similarity_factor = calculate_similarity(single_object, next_single_object)
         if node_similarity_factor > similarity_factor:

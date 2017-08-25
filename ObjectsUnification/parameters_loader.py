@@ -27,8 +27,8 @@ def load_all_from_file_for_similarity(similarity_calculator):
 
 def load_all_from_file_for_unification(objects_unificator):
 
-    objects_unificator.min_similarity_factor = \
-        yaml_lookup('unification/min_similarity_factor')
+    objects_unificator.min_similarity_factor = yaml_lookup('unification/min_similarity_factor')
+    objects_unificator.min_connection_length_percentage = yaml_lookup('unification/min_connection_length_percentage')
     work_on_copy = yaml_lookup('unification/work_on_copy')
     objects_unificator.work_on_copy = True if work_on_copy == 'True' else False
 
@@ -48,6 +48,7 @@ def yaml_lookup(path, return_str=False):
 def get_yaml():
     with open(_file_path()) as stream:
         return yaml.load(stream)
+
 
 def get_default_yaml():
     with open(_default_file_path()) as stream:

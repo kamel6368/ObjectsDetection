@@ -8,4 +8,5 @@ similarity:
 
 unification:
   min_similarity_factor: 0.5
+  min_connection_length_percentage: 0.5
   work_on_copy: True
