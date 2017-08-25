@@ -9,7 +9,7 @@ class PictureTransformer:
         self.pictures_merge_dark_pixels_percentage_border = None
 
     @staticmethod
-    def percentage_of_bright_pixels(im, color_space):
+    def percentage_of_bright_pixels(im, color_space, bright_pixel_lightness ):
         """
         Calculates percentage of bright pixels in the image
         :param im: image to be calculated
@@ -26,7 +26,7 @@ class PictureTransformer:
         else:
             return None
 
-        gray = cv2.inRange(gray, (0, 160, 0), (179, 255, 255))
+        gray = cv2.inRange(gray, (0, bright_pixel_lightness, 0), (179, 255, 255))
         number_of_pixels = gray.shape[0] * gray.shape[1]
         bright_pixels = cv2.countNonZero(gray)
         return float(bright_pixels) / float(number_of_pixels)
@@ -53,7 +53,7 @@ class PictureTransformer:
         return final_picture
 
     @staticmethod
-    def remove_light_gray_background(im):
+    def remove_light_gray_background(im, bright_pixel_lightness ):
         """
         Removes light gray / white background from image
         :param im: image from which background is to be removed; image must be in BGR color space
@@ -61,7 +61,7 @@ class PictureTransformer:
         """
 
         im = cv2.cvtColor(im, cv2.COLOR_BGR2HLS)
-        mask = cv2.inRange(im, (0, 140, 0), (179, 255, 255))
+        mask = cv2.inRange(im, (0, bright_pixel_lightness, 0), (179, 255, 255))
         mask = cv2.bitwise_not(mask)
         im = cv2.bitwise_and(im, im, mask=mask)
         return cv2.cvtColor(im, cv2.COLOR_HLS2BGR)

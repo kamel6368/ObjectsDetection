@@ -27,7 +27,7 @@ class TCPServer(CommonTCPServer):
 
     def restart_callback(self):
         self.main.is_agent_alive = False
-        self.main.start_tcp_server()
+        self.main.restart_tcp_server()
 
     def _image_action(self, content):
         image = image_from_string(content)
@@ -35,7 +35,8 @@ class TCPServer(CommonTCPServer):
             self.logger.print_msg('TCPServer/handle_message/invalid image')
             return
         if self.main.stream_mode == StreamMode.EACH_FRAME:
-            tasks.image_action_stream_mode_each_frame(self.main, self.main.tcp_client, image)
+            tasks.image_action_stream_mode_each_frame(self.main, self.main.tcp_client, image,
+                                                      tasksGUI.get_distance(self.main.main_layout))
         elif self.main.stream_mode == StreamMode.VIDEO:
             tasks.image_action_stream_mode_video(image, self.main.video_buffer, self.main.main_layout)
 
@@ -51,8 +52,6 @@ class TCPServer(CommonTCPServer):
     def _stream_on_ack_action(self):
         self.main.is_stream_on = True
         tasksGUI.update_gui_after_stream_on(self.main, self.main.main_layout)
-        if self.main.stream_mode == StreamMode.EACH_FRAME:
-            tasks.clear_frames_buffer(self.main)
 
     def _stream_off_ack_action(self):
         self.main.is_stream_on = False
@@ -72,5 +71,5 @@ class TCPServer(CommonTCPServer):
                                          self.main.object_detector, self.main.objects_unificator, self.main,
                                          self.main.main_layout)
         tasksGUI.update_gui_after_stream_off(self.main, self.main.main_layout, True)
-        self.main.current_frame_index = len(self.main.video_buffer) - 1
+        self.main.current_video_index = len(self.main.video_buffer) - 1
 

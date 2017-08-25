@@ -1,0 +1,46 @@
+#:include Layouts/image_processing_settings_layout.kv
+#:include Layouts/unification_settings_layout.kv
+#:include Layouts/general_settings_layout.kv
+
+<SettingsLayout@Screen>:
+  name: 'SettingsScreen'
+  GridLayout:
+    rows: 3
+    orientation: 'vertical'
+
+    BoxLayout:
+      orientation: 'horizontal'
+      spacing: dp(50)
+      size_hint_y: None
+      height: dp(50)
+      Button:
+        text: 'Back'
+        on_press: root._back_button_on_press()
+      ToggleButton:
+        id: image_processing_settings_button
+        text: 'Image Processing'
+        on_press: root._image_processing_button_on_press()
+      ToggleButton:
+        id: objects_unification_settings_button
+        text: 'Unification'
+        on_press: root._unification_button_on_press()
+      ToggleButton:
+        id: general_settings_button
+        text: 'General'
+        on_press: root._general_button_on_press()
+
+    BoxLayout:
+      id: settings_holder
+
+
+    BoxLayout:
+      orientation: 'horizontal'
+      size_hint_y: None
+      height: dp(50)
+      spacing: dp(500)
+      Button:
+        text: 'Save'
+        on_press: root._save_button_on_press()
+      Button:
+        text: 'Set to default'
+        on_press: root._set_to_default_button_on_press()

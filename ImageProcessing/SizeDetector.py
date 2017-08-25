@@ -29,7 +29,8 @@ class SizeDetector:
         box = np.int0(box)
         object_width_pixels = self._euclidean_distance(box[0], box[1])
         object_height_pixels = self._euclidean_distance(box[1], box[2])
-        return self.assume_size(distance, (object_width_pixels, object_height_pixels), image_resolution)
+        result = self.assume_size(distance, (object_width_pixels, object_height_pixels), image_resolution)
+        return result
 
     def assume_size(self, distance, object_size_pixels, image_resolution):
         """

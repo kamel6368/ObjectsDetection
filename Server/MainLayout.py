@@ -1,33 +1,49 @@
 import tasks
 import tasksGUI
-from kivy.clock import mainthread
-from kivy.uix.boxlayout import BoxLayout
+from kivy.uix.screenmanager import Screen
 
 
-class MainLayout(BoxLayout):
+class MainLayout(Screen):
 
     single_image = False
     quantization_image = None
 
-    def __init__(self, main):
-        super(MainLayout, self).__init__()
+    def __init__(self, main, name=None):
+        super(MainLayout, self).__init__(name=name)
         self.main = main
+        # self.show_raw_image(self.main.gui_images[0])
 
     ############################################
     # callable functions
     ############################################
 
-    def show_quantization_image(self):
-        self.ids.images_container.add_widget(self.ids.quantization_image)
+    def show_raw_image(self):
+        self.ids.quantization_image.size_hint_x = None
+        self.ids.raw_image.size_hint_x = 1
+        self.ids.quantization_image.width = 0
 
-    def hide_quantization_image(self):
-        self.ids.images_container.remove_widget(self.ids.quantization_image)
+    def show_quantization_image(self):
+        self.ids.raw_image.size_hint_x = None
+        self.ids.quantization_image.size_hint_x = 1
+        self.ids.raw_image.width = 0
+
+    def show_both_images(self,):
+        self.ids.quantization_image.size_hint_x = 1
+        self.ids.raw_image.size_hint_x = 1
 
     def update_raw_image_texture(self, texture):
         self.ids.raw_image.texture = texture
 
+    def update_raw_image_source(self, path):
+        self.ids.raw_image.source = path
+        self.ids.raw_image.reload()
+
     def update_quantized_image_texture(self, texture):
         self.ids.quantization_image.texture = texture
+
+    def update_quantized_image_source(self, path):
+        self.ids.quantization_image.source = path
+        self.ids.quantization_image.reload()
 
     def enable_stream_button(self):
         self.ids.start_stop_stream_button.disabled = False
@@ -63,7 +79,6 @@ class MainLayout(BoxLayout):
         self.ids.video_duration_text_input.disabled = False
 
     def disable_video_duration_text_input(self):
-        self.ids.video_duration_text_input.focus = False
         self.ids.video_duration_text_input.disabled = True
 
     def print_on_console(self, text):
@@ -87,12 +102,27 @@ class MainLayout(BoxLayout):
     def disable_show_only_unified_objects_checkbox(self):
         self.ids.show_only_unified_objects_checkbox.disabled = True
 
+    def get_distance(self):
+        return self.ids.distance_text_input.text
+
+    def enable_distance_text_input(self):
+        self.ids.distance_text_input.disabled = False
+
+    def disable_distance_text_input(self):
+        self.ids.distance_text_input.disabled = True
+
+    def enable_settings_button(self):
+        self.ids.settings_button.disabled = False
+
+    def disable_settings_button(self):
+        self.ids.settings_button.disabled = True
+
     ############################################
     # buttons callbacks
     ############################################
 
-    def _single_two_images_mode_button_on_press(self):
-        tasksGUI.single_two_images_mode_button_on_press(self.main, self)
+    def _image_mode_spinner_on_text(self):
+        tasksGUI.image_mode_spinner_on_text(self.main, self.main.main_layout, self.ids.image_mode_spinner.text)
 
     def _start_shutdown_agent_button_pressed(self):
         tasksGUI.start_shutdown_agent_button_pressed(self.main)
@@ -104,14 +134,19 @@ class MainLayout(BoxLayout):
         tasks.change_quantization_state(self.main, self.ids.apply_quantization_checkbox.active)
 
     def _stream_mode_button_on_text(self):
-        tasks.change_stream_mode(self.main)
-        tasksGUI.stream_mode_button_on_text(self.main, self)
+        tasksGUI.stream_mode_button_on_text(self.main, self, self.ids.show_only_unified_objects_checkbox.active)
 
     def _previous_frame_button_on_press(self):
-        tasksGUI.previous_frame_button_on_press(self.main, self.main.main_layout)
+        tasksGUI.previous_frame_button_on_press(self.main, self.main.main_layout,
+                                                       self.ids.show_only_unified_objects_checkbox.active)
 
     def _next_frame_button_on_press(self):
-        tasksGUI.next_frame_button_on_press(self.main, self.main.main_layout)
+        tasksGUI.next_frame_button_on_press(self.main, self.main.main_layout,
+                                                   self.ids.show_only_unified_objects_checkbox.active)
 
-    def _show_only_unified_objects_checkbox(self):
-        tasksGUI.show_only_unified_objects_checkbox(self.main, self.main.main_layout)
+    def _show_only_unified_objects_checkbox_on_state_change(self):
+        tasksGUI.show_only_unified_objects_checkbox_on_state_change(self.main, self.main.main_layout,
+                                                                           self.ids.show_only_unified_objects_checkbox.active)
+
+    def _settings_button_on_press(self):
+        tasksGUI.show_settings_view(self.main.screen_manager)

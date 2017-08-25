@@ -63,7 +63,6 @@ class SimpleObject:
 
     def to_string(self, one_line=False, separator=', '):
         str_symbols = self._list_of_symbols_to_string(one_line, separator)
-
         parts = [
             'Simple Object',
             'Shape - ' + str(self.shape).split('.')[1],

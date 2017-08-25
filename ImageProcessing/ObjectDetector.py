@@ -35,6 +35,7 @@ class ObjectDetector:
         self.image_preparation_dark_pixels_percentage_border = None
         self.image_preparation_gamma_increase = None
         self.image_preparation_number_of_quantizied_colors = None
+        self.image_preparation_bright_pixel_lightness = None
 
     def detect_objects(self, frame, real_distance=None, auto_contour_clear=True, prepare_image_before_detection=True):
         """
@@ -136,10 +137,11 @@ class ObjectDetector:
         :param im: raw image from camera
         :return: image ready to for process of object detection
         """
-        if self.picture_transformer.percentage_of_bright_pixels(im, ColorSpace.BGR) < \
+        if self.picture_transformer.percentage_of_bright_pixels(im, ColorSpace.BGR,
+                                                                self.image_preparation_bright_pixel_lightness) < \
                 self.image_preparation_dark_pixels_percentage_border:
             im = self.picture_transformer.adjust_gamma(im, self.image_preparation_gamma_increase)
-        im = self.picture_transformer.remove_light_gray_background(im)
+        im = self.picture_transformer.remove_light_gray_background(im, self.image_preparation_bright_pixel_lightness)
         return self.picture_transformer.color_quantization_using_k_means(im,
                                                                          self.image_preparation_number_of_quantizied_colors)
 

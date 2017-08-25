@@ -1,4 +1,7 @@
-<MainLayout>:
+#:include Layouts/settings_layout.kv
+
+<MainLayout@Screen>:
+  name: 'MainScreen'
   BoxLayout:
     orientation: 'vertical'
     spacing: 15
@@ -32,13 +35,15 @@
           height: 30
           size_hint: 0.4, None
           orientation: 'horizontal'
+          Spinner:
+            id: image_mode_spinner
+            text: 'Both images'
+            values: ['Raw Image', 'Quantized image', 'Both images']
+            on_text: root._image_mode_spinner_on_text()
           Button:
-            id: single_two_images_mode_button
-            text: 'single_two_images_mode'
-            on_press: root._single_two_images_mode_button_on_press()
-          Button:
-            id: settings
-            text: 'settings'
+            id: settings_button
+            text: 'Settings'
+            on_press: root._settings_button_on_press()
 
     BoxLayout:
       orientation: 'horizontal'
@@ -62,12 +67,12 @@
           orientation: 'horizontal'
           Button:
             id: previous_frame_button
-            text: 'previous_frame'
+            text: 'Previous Frame'
             disabled: True
             on_press: root._previous_frame_button_on_press()
           Button:
             id: next_frame_button
-            text: 'next_frame'
+            text: 'Next Frame'
             disabled: True
             on_press: root._next_frame_button_on_press()
         BoxLayout:
@@ -79,7 +84,7 @@
           CheckBox:
             id: show_only_unified_objects_checkbox
             disabled: True
-            on_active: root._show_only_unified_objects_checkbox()
+            on_active: root._show_only_unified_objects_checkbox_on_state_change()
         ScrollView:
           Label:
             id: console
@@ -96,13 +101,13 @@
       spacing: 20
       Button:
         id: start_stop_stream_button
-        text: 'start_stream'
+        text: 'Start Stream'
         on_press: root._start_stop_stream_button_on_press()
         disabled: True
       BoxLayout:
         orientation: 'vertical'
         Label:
-          text: 'stream_mode'
+          text: 'Stream Mode'
         Spinner:
           id: stream_mode_spinner
           text: 'Each frame'
@@ -112,17 +117,24 @@
       BoxLayout:
         orientation: 'vertical'
         Label:
-          text: 'Video duration'
+          text: 'Video Duration [s]'
         TextInput:
           id: video_duration_text_input
           text: '3'
           disabled: True
-          focus: False
           input_filter: 'int'
       BoxLayout:
         orientation: 'vertical'
         Label:
-          text: 'apply_quantization'
+          text: 'Distance [cm]'
+        TextInput:
+          id: distance_text_input
+          text: '20'
+          input_filter: 'int'
+      BoxLayout:
+        orientation: 'vertical'
+        Label:
+          text: 'Apply Quantization'
         CheckBox:
           id: apply_quantization_checkbox
           disabled: True

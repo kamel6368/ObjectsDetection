@@ -1,24 +1,28 @@
-import tasks
-import configurable_objects_factory
+from collections import deque
+
 from kivy.app import App
 from kivy.lang.builder import Builder
-from collections import deque
-from MainLayout import MainLayout
+from kivy.uix.screenmanager import ScreenManager
+
+import configurable_objects_factory
+import tasks
 from Common.Logger import Logger
 from Common.TCPConnections import StreamMode
+from MainLayout import MainLayout
+from SettingsLayout import SettingsLayout
 
 
 class MyApp(App):
 
     def __init__(self):
         self.exit = False
+        self.screen_manager = None
         self.main_layout = None
         self.tcp_server = None
         self.tcp_client = None
         self.is_agent_alive = False
         self.logger = None
         self.is_stream_on = False
-        self.single_image_mode = False
         self.apply_quantization = False
         self.object_detector = None
         self.stream_mode = StreamMode.EACH_FRAME
@@ -26,21 +30,26 @@ class MyApp(App):
         self.frames_buffer_size = 10
         self.frames_buffer = deque([], maxlen=self.frames_buffer_size)
         self.current_frame_index = -1
+        self.current_video_index = -1
         self.objects_unificator = None
+        self.unified_objects = None
         App.__init__(self)
 
     def build(self):
         Builder.load_file('Layouts/main_layout.kv')
-        self.main_layout = MainLayout(self)
-        return self.main_layout
+        self.screen_manager = ScreenManager()
+        self.main_layout = MainLayout(self, name='MainScreen')
+        settings_layout = SettingsLayout(self.screen_manager, self, name='SettingsScreen')
+        self.screen_manager.add_widget(self.main_layout)
+        self.screen_manager.add_widget(settings_layout)
+        return self.screen_manager
 
     def on_start(self):
         self.logger = Logger()
 
         self.tcp_client = configurable_objects_factory.create_tcp_client(self.logger)
         tasks.try_reconnect_to_alive_agents(self, self.tcp_client)
-        self.tcp_server = configurable_objects_factory.create_tcp_server(self, self.logger)
-        self.tcp_server.start()
+        self.restart_tcp_server()
 
         self.object_detector = configurable_objects_factory.create_object_detector()
         self.objects_unificator = configurable_objects_factory.create_objects_unificator()
@@ -48,3 +57,7 @@ class MyApp(App):
     def on_stop(self):
         self.tcp_server.disconnect()
         self.tcp_client.disconnect()
+
+    def restart_tcp_server(self):
+        self.tcp_server = configurable_objects_factory.create_tcp_server(self, self.logger)
+        self.tcp_server.start()

@@ -1,6 +1,6 @@
 import cv2
 import tasksGUI
-from collections import deque
+import threading
 from Common.serialization import serialize_list_of_objects
 from DataModel.enums import Color
 from kivy.graphics.texture import Texture
@@ -48,8 +48,11 @@ def acknowledge_agent_shutdown(tcp_client):
 def start_stream(main, tcp_client, main_layout):
     if main.stream_mode == StreamMode.VIDEO:
         clear_video_buffer(main)
+    elif main.stream_mode == StreamMode.EACH_FRAME:
+        clear_frames_buffer(main)
     video_duration = main_layout.get_video_duration()
-    tcp_client.send(TCPCommands.STREAM_ON, prepare_content_for_stream_on(main.stream_mode, video_duration))
+    content = prepare_content_for_stream_on(main.stream_mode, video_duration)
+    tcp_client.send(TCPCommands.STREAM_ON, content)
 
 
 def prepare_content_for_stream_on(stream_mode, duration):
@@ -63,11 +66,11 @@ def stop_stream(tcp_client):
     tcp_client.send(TCPCommands.STREAM_OFF, '')
 
 
-def detect_objects(object_detector, raw_image, quantizied_image):
+def detect_objects(object_detector, raw_image, quantizied_image, real_distance):
     image_to_process = raw_image
     if quantizied_image is not None:
         image_to_process = quantizied_image
-    return object_detector.detect_objects(image_to_process, real_distance=None,
+    return object_detector.detect_objects(image_to_process, real_distance=real_distance,
                                           auto_contour_clear=False, prepare_image_before_detection=False)
 
 
@@ -98,12 +101,12 @@ def change_stream_mode(main):
         main.stream_mode = StreamMode.VIDEO
 
 
-def image_action_stream_mode_each_frame(main, tcp_client, image):
+def image_action_stream_mode_each_frame(main, tcp_client, image, real_distance):
     quantizied_image = None
     if main.apply_quantization:
         quantizied_image = main.object_detector._prepare_image_for_detection(image)
 
-    objects = detect_objects(main.object_detector, image, quantizied_image)
+    objects = detect_objects(main.object_detector, image, quantizied_image, real_distance)
     draw_contours_on_image(main.object_detector, image)
     if main.apply_quantization and quantizied_image is not None:
         draw_contours_on_image(main.object_detector, quantizied_image)
@@ -124,9 +127,18 @@ def image_action_stream_mode_video(image, video_buffer, main_layout):
 def list_of_objects_to_string(objects):
     result = ''
     for object in objects:
-        result += object.to_string() + '\n'
+        result += object.to_string().replace('\t', '    ') + '\n\n'
     return result
 
+
+def list_of_objects_with_certainty_factor_to_string(objects):
+    result = ''
+    for tuple in objects:
+        object_str = tuple[0].to_string().replace('\t', '    ')
+        temp = object_str.split('\n')
+        temp[0] += '    (Certainty Factor: ' + str(tuple[1]) + ')'
+        result += '\n'.join(temp) + '\n\n'
+    return result
 
 def extract_objects_from_video(video_buffer, apply_quantization, object_detector, objects_unificator,
                                main, main_layout):
@@ -137,7 +149,8 @@ def extract_objects_from_video(video_buffer, apply_quantization, object_detector
         if apply_quantization:
             quantizied_frame = object_detector._prepare_image_for_detection(raw_frame)
 
-        detected_objects = detect_objects(object_detector, raw_frame, quantizied_frame)
+        real_distance = tasksGUI.get_distance(main_layout)
+        detected_objects = detect_objects(object_detector, raw_frame, quantizied_frame, real_distance)
         objects_each_frame.append(detected_objects)
         draw_contours_on_image(object_detector, raw_frame)
         if quantizied_frame is not None:

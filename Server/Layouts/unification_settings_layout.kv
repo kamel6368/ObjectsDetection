@@ -1,0 +1,59 @@
+#:include Layouts/custom_widgets.kv
+
+<UnificationSettingsLayout@ScrollView>:
+  BoxLayout:
+    size_hint_y: None
+    height: self.minimum_height
+    orientation: 'vertical'
+    spacing: 30
+
+
+    BoxLayout:
+      orientation: 'vertical'
+      size_hint_y: None
+      height: 250
+      Label:
+        text: 'Similarity'
+        size_hint: 1, None
+        height: 20
+      AnchorLayout:
+        Form:
+          id: color_weight_form
+          text: 'Color weight'
+      AnchorLayout:
+        Form:
+          id: shape_weight_form
+          text: 'Shape weight'
+      AnchorLayout:
+        Form:
+          id: size_weight_form
+          text: 'Size weight'
+      AnchorLayout:
+        Form:
+          id: pattern_weight_form
+          text: 'Pattern weight'
+      AnchorLayout:
+        Form:
+          id: symbols_weight_form
+          text: 'Symbols weight'
+      AnchorLayout:
+        Form:
+          id: parts_weight_form
+          text: 'Parts weight'
+
+    BoxLayout:
+      orientation: 'vertical'
+      size_hint_y: None
+      height: 100
+      Label:
+        text: 'Unification'
+        size_hint: 1, None
+        height: 20
+      AnchorLayout:
+        Form:
+          id: min_similarity_factor_form
+          text: 'Minimal similarity factor'
+      AnchorLayout:
+        Form:
+          id: work_on_copy_form
+          text: 'Work on copy'

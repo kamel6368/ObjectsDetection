@@ -1,0 +1,42 @@
+#:include Layouts/custom_widgets.kv
+
+<GeneralSettingsLayout@ScrollView>:
+  BoxLayout:
+    size_hint_y: None
+    height: self.minimum_height
+    orientation: 'vertical'
+    spacing: 30
+
+
+    BoxLayout:
+      orientation: 'vertical'
+      size_hint_y: None
+      height: 270
+      Label:
+        text: 'TCP connections'
+        size_hint: 1, None
+        height: 20
+      AnchorLayout:
+        Form:
+          id: agent_address_form
+          text: 'Agent address'
+      AnchorLayout:
+        Form:
+          id: agent_port_form
+          text: 'Agent port'
+      AnchorLayout:
+        Form:
+          id: receive_address_form
+          text: 'Server address'
+      AnchorLayout:
+        Form:
+          id: receive_port_form
+          text: 'Server port'
+      AnchorLayout:
+        Form:
+          id: buffer_size_form
+          text: 'Buffer size'
+      AnchorLayout:
+        Form:
+          id: socket_timeout_form
+          text: 'Socket timeout'

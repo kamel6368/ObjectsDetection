@@ -1,7 +1,7 @@
 TCPConnection:
-  remote_server_address: 192.168.1.10
+  remote_server_address: 192.168.0.24
   remote_server_port: 23506
-  receive_address: 192.168.1.5
+  receive_address: 192.168.0.25
   receive_port: 23507
   buffer_size: 2048
   socket_timeout: 3.0
@@ -9,3 +9,9 @@ TCPConnection:
 Database:
   path: 'Resources/Database/objects.db'
   create_schema_sql: 'Resources/Database/CreateSchema.sql'
+  insert_to_symbol: 'Resources/Database/InsertToSymbol.sql'
+  insert_to_simple_object: 'Resources/Database/InsertToSimpleObject.sql'
+  insert_to_combined_object: 'Resources/Database/InsertToCombinedObject.sql'
+
+Camera:
+  default_frame_rate: 60

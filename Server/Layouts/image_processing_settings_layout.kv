@@ -1,0 +1,195 @@
+#:include Layouts/custom_widgets.kv
+
+<ImageProcessingSettingsLayout@ScrollView>:
+  BoxLayout:
+    size_hint_y: None
+    height: self.minimum_height
+    orientation: 'vertical'
+    spacing: 30
+
+
+    BoxLayout:
+      orientation: 'vertical'
+      size_hint_y: None
+      height: 100
+      Label:
+        text: 'Camera information'
+        size_hint: 1, None
+        height: 20
+      AnchorLayout:
+        Form:
+          id: horizontal_field_of_view_form
+          text: 'Horizontal field of view'
+      AnchorLayout:
+        Form:
+          id: vertical_field_of_view_form
+          text: 'Vertical field of view'
+
+
+    BoxLayout:
+      orientation: 'vertical'
+      size_hint_y: None
+      height: 60
+      Label:
+        text: 'General'
+        size_hint: 1, None
+        height: 20
+      AnchorLayout:
+        Form:
+          id: contour_area_noise_border_form
+          text: 'Contour area noise border'
+
+    BoxLayout:
+      orientation: 'vertical'
+      size_hint_y: None
+      height: 300
+      Label:
+        text: 'Colors'
+        size_hint: 1, None
+        height: 20
+      AnchorLayout:
+        Form:
+          id: min_color_bound_hsv_form
+          text: 'Minimum color bound HSV'
+      AnchorLayout:
+        Form:
+          id: max_color_bound_hsv_form
+          text: 'Maximum color bound HSV'
+      AnchorLayout:
+        Form:
+          id: red_hue_bound_form
+          text: 'Red hue bound'
+      AnchorLayout:
+        Form:
+          id: yellow_hue_bound_form
+          text: 'Yellow hue bound'
+      AnchorLayout:
+        Form:
+          id: green_hue_bound_form
+          text: 'Green hue bound'
+      AnchorLayout:
+        Form:
+          id: blue_hue_bound_form
+          text: 'Blue hue bound'
+      AnchorLayout:
+        Form:
+          id: violet_hue_bound_form
+          text: 'Violet hue bound'
+
+
+    BoxLayout:
+      orientation: 'vertical'
+      size_hint_y: None
+      height: 100
+      Label:
+        text: 'Combined Objects detection'
+        size_hint: 1, None
+        height: 20
+      AnchorLayout:
+        Form:
+          id: combined_objects_detection_canny_threshold_1_form
+          text: 'Lower Canny threshold'
+      AnchorLayout:
+        Form:
+          id: combined_objects_detection_canny_threshold_2_form
+          text: 'Higher Canny threshold'
+
+    BoxLayout:
+      orientation: 'vertical'
+      size_hint_y: None
+      height: 150
+      Label:
+        size_hint: 1, None
+        height: 20
+        text: 'Image preparation'
+      AnchorLayout:
+        Form:
+          id: img_prep_dark_pixels_percentage_border_form
+          text: 'Dark pixels percentage border'
+      AnchorLayout:
+        Form:
+          id: gamma_increase_form
+          text: 'Gamma increase'
+      AnchorLayout:
+        Form:
+          id: number_of_quantizied_colors_form
+          text: 'Number of quantizied colors'
+      AnchorLayout:
+        Form:
+          id: bright_pixel_lightness_form
+          text: 'Bright pixel lightness'
+
+    BoxLayout:
+      orientation: 'vertical'
+      size_hint_y: None
+      height: 300
+      Label:
+        size_hint: 1, None
+        height: 20
+        text: 'Pattern recognition'
+      AnchorLayout:
+        Form:
+          id: pattern_recognition_canny_threshold_1_form
+          text: 'Lower Canny threshold'
+      AnchorLayout:
+        Form:
+          id: pattern_recognition_canny_threshold_2_form
+          text: 'Higher Canny threshold'
+      AnchorLayout:
+        Form:
+          id: minimum_line_length_form
+          text: 'Minimum line length'
+      AnchorLayout:
+        Form:
+          id: hough_lines_threshold_form
+          text: 'Hough line threshold'
+      AnchorLayout:
+        Form:
+          id: max_line_gap_form
+          text: 'Max line gap'
+      AnchorLayout:
+        Form:
+          id: angle_epsilon_form
+          text: 'Angle epsilon'
+      AnchorLayout:
+        Form:
+          id: percentage_of_line_type_to_qualify_as_pattern_form
+          text: 'Percentage of line type to qualify as pattern'
+
+    BoxLayout:
+      orientation: 'vertical'
+      size_hint_y: None
+      height: 100
+      Label:
+        size_hint: 1, None
+        height: 20
+        text: 'Pictures merge'
+      AnchorLayout:
+        Form:
+          id: pic_merge_dark_pixels_percentage_border_form
+          text: 'Dark pixels percentage border'
+
+    BoxLayout:
+      orientation: 'vertical'
+      size_hint_y: None
+      height: 180
+      Label:
+        size_hint: 1, None
+        height: 20
+        text: 'Size discretization'
+      AnchorLayout:
+        Form:
+          id: tiny_bounds_form
+          text: 'Tiny bounds'
+      AnchorLayout:
+        Form:
+          id: small_bounds_form
+          text: 'Small bounds'
+      AnchorLayout:
+        Form:
+          id: medium_bounds_form
+          text: 'Medium bounds'
+      AnchorLayout:
+        Form:
+          id: big_bounds_form
+          text: 'Big bounds'
