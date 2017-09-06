@@ -61,6 +61,8 @@ def calculate_combine_object_to_combined_object_similarity(object_1, object_2, c
 
 
 def calculate_simple_object_to_combined_object_similarity(simple_object, combined_object):
+    # for now there is no logical reason to support this operation but this function is left
+    # here in case someone would find it useful in the future
     return 0.0
 
 

@@ -19,13 +19,14 @@ def unify_objects(frames, calculate_similarity, min_similarity_factor=0.5,
                   min_connection_length_percentage=0.5, work_on_copy=True):
     if work_on_copy:
         frames = copy.deepcopy(frames)
-    prepare_frames(frames)
+    _prepare_frames(frames)
 
     connections = []
     for frame_index in range(0, len(frames)-1):
+        node_neighbours_dictionary = {}
         for object_pair in frames[frame_index]:
-            connection = create_object_connection(object_pair[1], frame_index, frames, min_similarity_factor,
-                                                  calculate_similarity)
+            connection = _create_object_connection(object_pair[1], frame_index, frames, min_similarity_factor,
+                                                   calculate_similarity, node_neighbours_dictionary)
             if len(connection) > 1:
                 connections.append(connection)
 
@@ -33,55 +34,63 @@ def unify_objects(frames, calculate_similarity, min_similarity_factor=0.5,
     for connection in connections:
         percentage_length = float(len(connection)) / len(frames)
         if percentage_length >= min_connection_length_percentage:
-            objects.append(extract_unified_objects(connection, calculate_similarity))
+            objects.append(_extract_unified_objects(connection, calculate_similarity))
     return objects
 
 
-def prepare_frames(frames):
-    # frames = [frame for frame in frames if frame != []]
+def _prepare_frames(frames):
     for frame_index in range(len(frames)):
         frames[frame_index] = map(lambda object: [None, object], frames[frame_index])
 
 
-def create_object_connection(object, current_frame_index, frames, min_similarity_factor, calculate_similarity):
+def _create_object_connection(object, current_frame_index, frames, min_similarity_factor,
+                              calculate_similarity, node_neighbours_dictionary):
     connection = [object]
     for frame_index in range(current_frame_index + 1, len(frames)):
-        next_node, next_node_index, next_node_similarity_factor = find_next_node(object,
-                                                                                 frames[frame_index],
-                                                                                 calculate_similarity)
-
-        if next_node is None or next_node_similarity_factor < min_similarity_factor:
+        next_nodes_similarity_list = _find_next_node(object, frames[frame_index], calculate_similarity,
+                                                     min_similarity_factor)
+        if len(next_nodes_similarity_list) == 0:
             continue
+        next_node = next_nodes_similarity_list[0][0]
+        next_node_similarity_factor = next_nodes_similarity_list[0][1]
+        node_neighbours_dictionary[object] = next_nodes_similarity_list
+        next_nodes_similarity_list.pop(0)
+
         if next_node[0] is not None:
             current_ancestor_similarity_factor = \
                 calculate_similarity(next_node[0], next_node[1])
             if next_node_similarity_factor < current_ancestor_similarity_factor:
                 continue
+            else:
+                alternative_neighbours_list = node_neighbours_dictionary[next_node[0]]
+                alternative_neighbour = alternative_neighbours_list[0]
+                alternative_neighbour[0] = next_node[0]
+                alternative_neighbours_list.pop(0)
 
         next_node[0] = object
         connection.append(next_node[1])
     return connection
 
 
-def find_next_node(single_object, next_frame, calculate_similarity):
+def _find_next_node(single_object, next_frame, calculate_similarity, min_similarity_factor):
     if next_frame == []:
-        return None, None, None
-    next_node_index = None
-    similarity_factor = 0
+        return []
+
+    next_nodes_similarity_list = []
+
     for index in range(0, len(next_frame)):
         if next_frame[index][0] is not None:
             continue
         next_single_object = next_frame[index][1]
         node_similarity_factor = calculate_similarity(single_object, next_single_object)
-        if node_similarity_factor > similarity_factor:
-            next_node_index = index
-            similarity_factor = node_similarity_factor
-    if next_node_index is None:
-        return None, None, None
-    return next_frame[next_node_index], next_node_index, similarity_factor
+        if node_similarity_factor >= min_similarity_factor:
+            next_nodes_similarity_list.append((next_frame[index], node_similarity_factor))
+
+    next_nodes_similarity_list.sort(key=lambda tup: tup[1])
+    return next_nodes_similarity_list
 
 
-def extract_unified_objects(connection, calculate_similarity):
+def _extract_unified_objects(connection, calculate_similarity):
     connection_length = len(connection)
     matrix = np.zeros((connection_length, connection_length))
     for obj_index in range(connection_length):
