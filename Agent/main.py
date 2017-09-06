@@ -1,5 +1,6 @@
 import tasks
 import database
+import Common.configurable_objects_factory as configurable_objects_factory
 from time import sleep
 from TCPServer import TCPServer
 from Common.config import config
@@ -36,7 +37,7 @@ class Main:
         self.tcp_client = TCPClient(remote_server_address, remote_server_port, socket_timeout, self.logger)
 
     def run(self):
-        self.logger = Logger()
+        self.logger = configurable_objects_factory.create_logger()
 
         self.video_capture = VideoCapturingWorker()
         self.video_capture.start()

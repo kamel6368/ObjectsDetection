@@ -9,12 +9,13 @@ class PictureTransformer:
         self.pictures_merge_dark_pixels_percentage_border = None
 
     @staticmethod
-    def percentage_of_bright_pixels(im, color_space, bright_pixel_lightness ):
+    def percentage_of_bright_pixels(im, color_space, bright_pixel_lightness):
         """
         Calculates percentage of bright pixels in the image
         :param im: image to be calculated
         :param color_space: color space in which image is represented,
                             color_space is id defined in class ColorSpace from enums.py
+        :param bright_pixel_lightness: border lightness
         :return: percentage of bright pixels in the image
         """
         if color_space is ColorSpace.BGR:
@@ -53,10 +54,11 @@ class PictureTransformer:
         return final_picture
 
     @staticmethod
-    def remove_light_gray_background(im, bright_pixel_lightness ):
+    def remove_light_gray_background(im, bright_pixel_lightness):
         """
         Removes light gray / white background from image
         :param im: image from which background is to be removed; image must be in BGR color space
+        :param bright_pixel_lightness: border lightness
         :return: image without light gray / white background
         """
 

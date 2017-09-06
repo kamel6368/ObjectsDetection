@@ -5,6 +5,7 @@ import json
 from DataModel.SimpleObject import SimpleObject
 from DataModel.CombinedObject import CombinedObject
 
+
 def image_to_string(image):
     _, jpg_as_text = cv2.imencode('.jpg', image)
     jpg_as_text = base64.b64encode(jpg_as_text)

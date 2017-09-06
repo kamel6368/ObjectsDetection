@@ -55,7 +55,6 @@ def get_default_yaml():
         return yaml.load(stream)
 
 
-
 def save_yaml_to_file(yaml_to_save):
     with open(_file_path(), 'w') as stream:
         yaml.dump(yaml_to_save, stream, default_flow_style=False)

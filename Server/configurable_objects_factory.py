@@ -6,6 +6,8 @@ from ImageProcessing.parameters_loader import load_all_from_file as load_all_fro
 from Common.config import config
 from Common.TCPConnections import TCPClient
 from TCPServer import TCPServer
+from Common.Logger import Logger
+import Common.configurable_objects_factory
 
 
 def create_object_detector():
@@ -36,3 +38,7 @@ def create_tcp_client(logger):
     agent_port = config('TCPConnection/agent_port')
     socket_timeout = config('TCPConnection/socket_timeout')
     return TCPClient(agent_address, agent_port, socket_timeout, logger)
+
+
+def create_logger():
+    return Common.configurable_objects_factory.create_logger()

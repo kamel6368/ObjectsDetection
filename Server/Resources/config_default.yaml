@@ -5,3 +5,8 @@ TCPConnection:
   receive_port: 23506
   buffer_size: 2048
   socket_timeout: 3.0
+
+Logger:
+  console_print: True
+  file_print: True
+  logs_path: 'Logs\'

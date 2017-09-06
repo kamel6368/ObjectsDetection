@@ -5,7 +5,7 @@ import tasks
 from Common.TCPConnections import StreamMode
 
 
-def image_mode_spinner_on_text(main, main_layout, mode):
+def image_mode_spinner_on_text(main_layout, mode):
     if mode == 'Raw Image':
         main_layout.show_raw_image()
     elif mode == 'Quantized image':

@@ -45,7 +45,7 @@ class MyApp(App):
         return self.screen_manager
 
     def on_start(self):
-        self.logger = Logger()
+        self.logger = configurable_objects_factory.create_logger()
 
         self.tcp_client = configurable_objects_factory.create_tcp_client(self.logger)
         tasks.try_reconnect_to_alive_agents(self, self.tcp_client)

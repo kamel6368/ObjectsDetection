@@ -15,3 +15,8 @@ Database:
 
 Camera:
   default_frame_rate: 60
+
+Logger:
+  console_print: True
+  file_print: True
+  logs_path: 'Logs/'

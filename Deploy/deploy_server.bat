@@ -11,5 +11,7 @@ xcopy ObjectsDetection\Common Server\Common /I /E
 
 echo cd Server ^& start pythonw run.py > run_server.bat
 
+mkdir Logs
+
 echo DONE
 pause

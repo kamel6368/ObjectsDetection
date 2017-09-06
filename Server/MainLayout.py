@@ -27,7 +27,7 @@ class MainLayout(Screen):
         self.ids.quantization_image.size_hint_x = 1
         self.ids.raw_image.width = 0
 
-    def show_both_images(self,):
+    def show_both_images(self):
         self.ids.quantization_image.size_hint_x = 1
         self.ids.raw_image.size_hint_x = 1
 
@@ -122,7 +122,7 @@ class MainLayout(Screen):
     ############################################
 
     def _image_mode_spinner_on_text(self):
-        tasksGUI.image_mode_spinner_on_text(self.main, self.main.main_layout, self.ids.image_mode_spinner.text)
+        tasksGUI.image_mode_spinner_on_text(self.main.main_layout, self.ids.image_mode_spinner.text)
 
     def _start_shutdown_agent_button_pressed(self):
         tasksGUI.start_shutdown_agent_button_pressed(self.main)

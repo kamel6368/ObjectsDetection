@@ -1,5 +1,6 @@
 cd ~
 rm -rf ObjectsDetection
+mkdir Logs
 
 unzip ObjectsDetection.zip
 rm ObjectsDetection.zip
