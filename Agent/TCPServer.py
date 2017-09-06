@@ -26,6 +26,8 @@ class TCPServer(CommonTCPServer):
             self._shutdown_ack_ack_action()
         elif command == TCPCommands.REMOTE_SERVER_BREAK_DOWN:
             self._remote_server_break_down_action()
+        elif command == TCPCommands.IMAGE_RECEIVED:
+            self._image_received_action()
 
     def restart_callback(self):
         self.main.start_tcp_server()
@@ -66,3 +68,7 @@ class TCPServer(CommonTCPServer):
     def _remote_server_break_down_action(self):
         self.main.is_registered = False
         tasks.register(self.main.tcp_client, self.logger)
+
+    def _image_received_action(self):
+        if self.main.video_recorder is not None:
+            self.main.video_recorder.acknowledge_image_received()

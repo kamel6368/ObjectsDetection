@@ -13,6 +13,7 @@ class TCPCommands:
     REGISTER = 'REGISTER'
     REGISTER_ACK = 'REGISTER_ACK'
     IMAGE = 'IMAGE'
+    IMAGE_RECEIVED = 'IMAGE_RECEIVED'
     OBJECTS = 'OBJECTS'
     STREAM_ON = 'STREAM_ON'
     STREAM_ON_ACK = 'STREAM_ON_ACK'
@@ -212,7 +213,7 @@ class TCPClient:
                 continue
         return is_connected
 
-    def send(self, command, content):
+    def send(self, command, content=''):
         message = self._prepare_message(command, content)
         self.logger.print_msg('TCPClient/Send: ' + message)
         try:

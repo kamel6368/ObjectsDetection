@@ -39,6 +39,7 @@ class TCPServer(CommonTCPServer):
                                                       tasksGUI.get_distance(self.main.main_layout))
         elif self.main.stream_mode == StreamMode.VIDEO:
             tasks.image_action_stream_mode_video(image, self.main.video_buffer, self.main.main_layout)
+            self.main.tcp_client.send(TCPCommands.IMAGE_RECEIVED)
 
     def _register_action(self):
         tasks.acknowledge_agent_registration(self.main, self.main.tcp_client)
