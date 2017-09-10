@@ -85,7 +85,10 @@ class ImageProcessingSettingsLayout(ScrollView):
             yaml = img_proc_param_loader.get_yaml()
         self.ids.horizontal_field_of_view_form.value = str(yaml['camera_info']['horizontal_field_of_view'])
         self.ids.vertical_field_of_view_form.value = str(yaml['camera_info']['vertical_field_of_view'])
-        self.ids.contour_area_noise_border_form.value = str(yaml['image_processing_params']['contour_area_noise_border'])
+        self.ids.object_contour_area_noise_border_form.value = \
+            str(yaml['image_processing_params']['general']['object_contour_area_noise_border'])
+        self.ids.symbol_contour_area_noise_border_form.value = \
+            str(yaml['image_processing_params']['general']['symbol_contour_area_noise_border'])
         self.ids.min_color_bound_hsv_form.value = str(yaml['image_processing_params']['colors']['min_color_bound_hsv'])
         self.ids.max_color_bound_hsv_form.value = str(yaml['image_processing_params']['colors']['max_color_bound_hsv'])
         self.ids.red_hue_bound_form.value = str(yaml['image_processing_params']['colors']['red_hue_bound'])
@@ -103,8 +106,10 @@ class ImageProcessingSettingsLayout(ScrollView):
             str(yaml['image_processing_params']['image_preparation']['gamma_increase'])
         self.ids.number_of_quantizied_colors_form.value = \
             str(yaml['image_processing_params']['image_preparation']['number_of_quantizied_colors'])
-        self.ids.bright_pixel_lightness_form.value = \
-            str(yaml['image_processing_params']['image_preparation']['bright_pixel_lightness'])
+        self.ids.bright_pixel_lightness_adjust_gamma_form.value = \
+            str(yaml['image_processing_params']['image_preparation']['image_preparation_bright_pixel_lightness_adjust_gamma'])
+        self.ids.bright_pixel_lightness_remove_background_form.value = \
+            str(yaml['image_processing_params']['image_preparation']['image_preparation_bright_pixel_lightness_remove_background'])
         self.ids.pattern_recognition_canny_threshold_1_form.value = \
             str(yaml['image_processing_params']['pattern_recognition']['canny_threshold_1'])
         self.ids.pattern_recognition_canny_threshold_2_form.value = \
@@ -137,7 +142,10 @@ class ImageProcessingSettingsLayout(ScrollView):
                 'vertical_field_of_view': float(self.ids.vertical_field_of_view_form.value)
             },
             'image_processing_params': {
-                'contour_area_noise_border': int(self.ids.contour_area_noise_border_form.value),
+                'general': {
+                    'object_contour_area_noise_border': int(self.ids.object_contour_area_noise_border_form.value),
+                    'symbol_contour_area_noise_border': int(self.ids.symbol_contour_area_noise_border_form.value)
+                },
                 'colors': {
                     'min_color_bound_hsv': self.ids.min_color_bound_hsv_form.value,
                     'max_color_bound_hsv': self.ids.max_color_bound_hsv_form.value,
@@ -155,7 +163,8 @@ class ImageProcessingSettingsLayout(ScrollView):
                     'dark_pixels_percentage_border': float(self.ids.img_prep_dark_pixels_percentage_border_form.value),
                     'gamma_increase': float(self.ids.gamma_increase_form.value),
                     'number_of_quantizied_colors': int(self.ids.number_of_quantizied_colors_form.value),
-                    'bright_pixel_lightness': int(self.ids.bright_pixel_lightness_form.value)
+                    'image_preparation_bright_pixel_lightness_adjust_gamma': int(self.ids.bright_pixel_lightness_adjust_gamma_form.value),
+                    'image_preparation_bright_pixel_lightness_remove_background': int(self.ids.bright_pixel_lightness_remove_background_form.value),
                 },
                 'pattern_recognition': {
                     'canny_threshold_1': int(self.ids.pattern_recognition_canny_threshold_1_form.value),

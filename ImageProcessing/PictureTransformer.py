@@ -22,6 +22,7 @@ class PictureTransformer:
             gray = cv2.cvtColor(im, cv2.COLOR_BGR2HLS)
         elif color_space is ColorSpace.HSV:
             gray = cv2.cvtColor(im, cv2.COLOR_HSV2BGR)
+            gray = cv2.cvtColor(gray, cv2.COLOR_BGR2HLS)
         elif color_space is ColorSpace.HSL:
             gray = cv2.cvtColor(im, cv2.COLOR_BGR2HLS)
         else:
@@ -54,16 +55,16 @@ class PictureTransformer:
         return final_picture
 
     @staticmethod
-    def remove_light_gray_background(im, bright_pixel_lightness):
+    def remove_light_gray_background(im, white_pixel_lightness):
         """
         Removes light gray / white background from image
         :param im: image from which background is to be removed; image must be in BGR color space
-        :param bright_pixel_lightness: border lightness
+        :param white_pixel_lightness: border lightness
         :return: image without light gray / white background
         """
 
         im = cv2.cvtColor(im, cv2.COLOR_BGR2HLS)
-        mask = cv2.inRange(im, (0, bright_pixel_lightness, 0), (179, 255, 255))
+        mask = cv2.inRange(im, (0, white_pixel_lightness, 0), (179, 255, 255))
         mask = cv2.bitwise_not(mask)
         im = cv2.bitwise_and(im, im, mask=mask)
         return cv2.cvtColor(im, cv2.COLOR_HLS2BGR)

@@ -6,7 +6,6 @@ from DataModel.enums import Color
 class CommonOperator:
 
     def __init__(self):
-        self.contour_area_noise_border = None
         self.min_color_bound_hsv = None
         self.max_color_bound_hsv = None
         self.red_bound = None
@@ -15,14 +14,14 @@ class CommonOperator:
         self.blue_bound = None
         self.violet_bound = None
 
-    def find_contours(self, image, mode):
+    def find_contours(self, image, mode, contour_area_noise_border):
         """
         Finds contours in given image
         :param image: image from which contours are to be found; it is best for image to be binary image
         :param mode: openCV mode for detecting contours;
                     mode can be one of the following: cv2.RETR_EXTERNAL, cv2.RETR_FLOODFILL, cv2.RETR_LIST,
                     cv2.RETR_CCOMP, cv2.RETR_TREE
-
+        :param contour_area_noise_border: minimal contour area below which contour is treated as noise and ignored
         :return: list of detected contours
         """
 
@@ -36,7 +35,7 @@ class CommonOperator:
                 continue
             # if contour area is less than given param (recommended 500) it is
             # considered to be noise and should be ignored
-            if contour_area > self.contour_area_noise_border :
+            if contour_area > contour_area_noise_border:
                 result_contour = cv2.approxPolyDP(single_contour, e * 0.02, closed=True)
                 result_contours.append(result_contour)
         return result_contours

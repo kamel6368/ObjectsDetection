@@ -3,22 +3,25 @@ camera_info:
   vertical_field_of_view: 48.8
 image_processing_params:
   colors:
-    blue_hue_bound: (76, 130)
-    green_hue_bound: !!python/unicode '(41, 75)'
+    blue_hue_bound: (86, 130)
+    green_hue_bound: (36, 85)
     max_color_bound_hsv: (179, 255, 255)
-    min_color_bound_hsv: !!python/unicode '(0, 50, 20)'
-    red_hue_bound: (144, 11)
-    violet_hue_bound: (131, 143)
-    yellow_hue_bound: !!python/unicode '(12, 40)'
+    min_color_bound_hsv: (0, 20, 20)
+    red_hue_bound: (170, 11)
+    violet_hue_bound: (131, 169)
+    yellow_hue_bound: (12, 35)
   combined_objects_detection:
     canny_threshold_1: 50
     canny_threshold_2: 500
-  contour_area_noise_border: 500
+  general:
+    object_contour_area_noise_border: 1500
+    symbol_contour_area_noise_border: 750
   image_preparation:
-    bright_pixel_lightness: 100
     dark_pixels_percentage_border: 0.4
-    gamma_increase: 2.0
-    number_of_quantizied_colors: 12
+    gamma_increase: 1.5
+    image_preparation_bright_pixel_lightness_adjust_gamma: 100
+    image_preparation_bright_pixel_lightness_remove_background: 120
+    number_of_quantizied_colors: 16
   pattern_recognition:
     angle_epsilon: 10
     canny_threshold_1: 50

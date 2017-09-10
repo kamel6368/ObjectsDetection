@@ -9,7 +9,8 @@ xcopy ObjectsDetection\ImageProcessing Server\ImageProcessing /I /E
 xcopy ObjectsDetection\DataModel Server\DataModel /I /E
 xcopy ObjectsDetection\Common Server\Common /I /E
 
-echo cd Server ^& start pythonw run.py > run_server.bat
+echo cd C:\Users\Kamil\Dysk Google\UCZELNIA\Praca inzynierska > run_server.bat
+echo cd Server ^& start python run.py >> run_server.bat
 
 mkdir Logs
 

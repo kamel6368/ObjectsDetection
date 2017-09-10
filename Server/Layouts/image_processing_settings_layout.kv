@@ -29,15 +29,19 @@
     BoxLayout:
       orientation: 'vertical'
       size_hint_y: None
-      height: 60
+      height: 90
       Label:
         text: 'General'
         size_hint: 1, None
         height: 20
       AnchorLayout:
         Form:
-          id: contour_area_noise_border_form
-          text: 'Contour area noise border'
+          id: object_contour_area_noise_border_form
+          text: 'Object contour area noise border'
+      AnchorLayout:
+        Form:
+          id: symbol_contour_area_noise_border_form
+          text: 'Symbol contour area noise border'
 
     BoxLayout:
       orientation: 'vertical'
@@ -97,7 +101,7 @@
     BoxLayout:
       orientation: 'vertical'
       size_hint_y: None
-      height: 150
+      height: 200
       Label:
         size_hint: 1, None
         height: 20
@@ -116,8 +120,12 @@
           text: 'Number of quantizied colors'
       AnchorLayout:
         Form:
-          id: bright_pixel_lightness_form
-          text: 'Bright pixel lightness'
+          id: bright_pixel_lightness_adjust_gamma_form
+          text: 'Bright pixel lightness to adjust gamma'
+      AnchorLayout:
+        Form:
+          id: bright_pixel_lightness_remove_background_form
+          text: 'Bright pixel lightness to remove background'
 
     BoxLayout:
       orientation: 'vertical'

@@ -21,8 +21,6 @@ def load_all_from_file(object_detector):
         yaml_lookup('camera_info/horizontal_field_of_view')
     size_detector.vertical_fov = \
         yaml_lookup('camera_info/vertical_field_of_view')
-    common_operator.contour_area_noise_border = \
-        yaml_lookup('image_processing_params/contour_area_noise_border')
     common_operator.min_color_bound_hsv = \
         literal_eval(yaml_lookup('image_processing_params/colors/min_color_bound_hsv'))
     common_operator.max_color_bound_hsv = \
@@ -37,6 +35,10 @@ def load_all_from_file(object_detector):
         literal_eval(yaml_lookup('image_processing_params/colors/blue_hue_bound'))
     common_operator.violet_bound = \
         literal_eval(yaml_lookup('image_processing_params/colors/violet_hue_bound'))
+    object_detector.object_contour_area_noise_border = \
+        yaml_lookup('image_processing_params/general/object_contour_area_noise_border')
+    object_detector.symbol_contour_area_noise_border = \
+        yaml_lookup('image_processing_params/general/symbol_contour_area_noise_border')
     object_detector.combined_objects_detection_canny_threshold_1 = \
         yaml_lookup('image_processing_params/combined_objects_detection/canny_threshold_1')
     object_detector.combined_objects_detection_canny_threshold_2 = \
@@ -47,8 +49,10 @@ def load_all_from_file(object_detector):
         yaml_lookup('image_processing_params/image_preparation/gamma_increase')
     object_detector.image_preparation_number_of_quantizied_colors = \
         yaml_lookup('image_processing_params/image_preparation/number_of_quantizied_colors')
-    object_detector.image_preparation_bright_pixel_lightness = \
-        yaml_lookup('image_processing_params/image_preparation/bright_pixel_lightness')
+    object_detector.image_preparation_bright_pixel_lightness_adjust_gamma = \
+        yaml_lookup('image_processing_params/image_preparation/image_preparation_bright_pixel_lightness_adjust_gamma')
+    object_detector.image_preparation_bright_pixel_lightness_remove_background = \
+        yaml_lookup('image_processing_params/image_preparation/image_preparation_bright_pixel_lightness_remove_background')
     pattern_recognizer.canny_threshold_1 = \
         yaml_lookup('image_processing_params/pattern_recognition/canny_threshold_1')
     pattern_recognizer.canny_threshold_2 = \

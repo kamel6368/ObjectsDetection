@@ -35,7 +35,10 @@ class ObjectDetector:
         self.image_preparation_dark_pixels_percentage_border = None
         self.image_preparation_gamma_increase = None
         self.image_preparation_number_of_quantizied_colors = None
-        self.image_preparation_bright_pixel_lightness = None
+        self.image_preparation_bright_pixel_lightness_adjust_gamma = None
+        self.image_preparation_bright_pixel_lightness_remove_background = None
+        self.object_contour_area_noise_border = None
+        self.symbol_contour_area_noise_border = None
 
     def detect_objects(self, frame, real_distance=None, auto_contour_clear=True, prepare_image_before_detection=True):
         """
@@ -56,7 +59,7 @@ class ObjectDetector:
             frame_copy = self._prepare_image_for_detection(frame_copy)
         result = []
 
-        # find contours of all combinded objects; here basic objects are considered to be combined objects
+        # find contours of all combined objects; here basic objects are considered to be combined objects
         external_contours = self._find_external_contours(frame_copy)
         for single_contour in external_contours:
             single_object_image = self._prepare_image_for_single_combined_object(frame_copy, single_contour)
@@ -68,6 +71,8 @@ class ObjectDetector:
                 result.append(part_objects[0])
             elif len(part_objects) > 1:
                 shape_type = sd.detect_shape(self.common_operator.convert_numpy_array_for_shape_detection(single_contour))
+                if shape_type == enumShape.CIRCLE or shape_type == enumShape.ELLIPSE:
+                    shape_type = enumShape.POLYGON
                 real_width, real_height = self.size_detector.assume_size_from_contour(real_distance, single_contour, frame.shape)
                 combined_object = CombinedObject(shape_type, real_width, real_height, part_objects)
                 result.append(combined_object)
@@ -87,7 +92,7 @@ class ObjectDetector:
                           self.combined_objects_detection_canny_threshold_2)
         edges = cv2.dilate(edges, None, iterations=2)
         edges = cv2.erode(edges, None, iterations=2)
-        return self.common_operator.find_contours(edges, cv2.RETR_EXTERNAL)
+        return self.common_operator.find_contours(edges, cv2.RETR_EXTERNAL, self.object_contour_area_noise_border)
 
     @staticmethod
     def _prepare_image_for_single_combined_object(image, contour):
@@ -112,7 +117,7 @@ class ObjectDetector:
         result = []
         for main_color in [c for c in Color if c != Color.NONE]:
             # find contours of objects with color main_color
-            contours_list = self._detect_basic_objects_contours(main_color, image)
+            contours_list = self._detect_basic_objects_contours(main_color, image, self.object_contour_area_noise_border)
             if contours_list == []:
                 continue
 
@@ -138,10 +143,10 @@ class ObjectDetector:
         :return: image ready to for process of object detection
         """
         if self.picture_transformer.percentage_of_bright_pixels(im, ColorSpace.BGR,
-                                                                self.image_preparation_bright_pixel_lightness) < \
+                                                                self.image_preparation_bright_pixel_lightness_adjust_gamma) < \
                 self.image_preparation_dark_pixels_percentage_border:
             im = self.picture_transformer.adjust_gamma(im, self.image_preparation_gamma_increase)
-        im = self.picture_transformer.remove_light_gray_background(im, self.image_preparation_bright_pixel_lightness)
+        im = self.picture_transformer.remove_light_gray_background(im, self.image_preparation_bright_pixel_lightness_remove_background)
         return self.picture_transformer.color_quantization_using_k_means(im,
                                                                          self.image_preparation_number_of_quantizied_colors)
 
@@ -193,7 +198,8 @@ class ObjectDetector:
         for symbol_color in [c for c in Color if c != Color.NONE]:
             if symbol_color is main_color:
                 continue
-            symbol_contours = self._detect_basic_objects_contours(symbol_color, sub_img)
+            symbol_contours = self._detect_basic_objects_contours(symbol_color, sub_img,
+                                                                  self.symbol_contour_area_noise_border)
             if symbol_contours is not None:
                 for single_contour in symbol_contours:
                     e = cv2.arcLength(single_contour, True)
@@ -276,7 +282,7 @@ class ObjectDetector:
 
         return result
 
-    def _detect_basic_objects_contours(self, color, frame):
+    def _detect_basic_objects_contours(self, color, frame, contour_area_noise_border):
         """
         Finds list of contours of objects with given color
         :param color: color id representing color of searched basic object
@@ -296,7 +302,7 @@ class ObjectDetector:
         mask = cv2.erode(mask, None, iterations=2)
         mask = cv2.dilate(mask, None, iterations=2)
 
-        result_contours = self.common_operator.find_contours(mask.copy(), cv2.RETR_EXTERNAL)
+        result_contours = self.common_operator.find_contours(mask.copy(), cv2.RETR_EXTERNAL, contour_area_noise_border)
         return result_contours
 
 

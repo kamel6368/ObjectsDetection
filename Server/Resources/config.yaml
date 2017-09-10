@@ -8,5 +8,5 @@ TCPConnection:
 
 Logger:
   console_print: True
-  file_print: True
+  file_print: False
   logs_path: 'Logs\'

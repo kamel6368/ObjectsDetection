@@ -53,6 +53,7 @@ class Main:
         self.logger.print_msg('Agent registered')
 
         while not self.exit:
+            # here is the place to integrate this subsystem with main decision loop
             sleep(1)
         self.logger.print_msg('Agent stopped')
         self.logger.print_msg('BYE!')
