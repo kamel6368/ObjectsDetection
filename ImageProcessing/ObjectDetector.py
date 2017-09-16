@@ -56,7 +56,7 @@ class ObjectDetector:
 
         frame_copy = frame.copy()
         if prepare_image_before_detection:
-            frame_copy = self._prepare_image_for_detection(frame_copy)
+            frame_copy = self.prepare_image_for_detection(frame_copy)
         result = []
 
         # find contours of all combined objects; here basic objects are considered to be combined objects
@@ -134,7 +134,7 @@ class ObjectDetector:
         result = self._remove_symbol_objects(result)
         return result
 
-    def _prepare_image_for_detection(self, im):
+    def prepare_image_for_detection(self, im):
         """
         If image is considered to be dark then it's brightened.
         After this from image is removed light gray / white background.

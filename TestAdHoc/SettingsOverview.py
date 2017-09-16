@@ -1,7 +1,7 @@
 from kivy.app import App
 from kivy.lang.builder import Builder
 
-from Server.SettingsLayout import SettingsLayout
+from Server.Layouts.SettingsLayout import SettingsLayout
 
 
 class MyApp(App):

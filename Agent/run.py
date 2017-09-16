@@ -1,5 +1,5 @@
 import tasks
-from main import Main
+from Main import Main
 
 main = Main()
 try:

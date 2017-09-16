@@ -1,4 +1,4 @@
-#:include Layouts/settings_layout.kv
+#:include Layouts/Views/settings_layout.kv
 
 <MainLayout@Screen>:
   name: 'MainScreen'
@@ -84,6 +84,7 @@
           CheckBox:
             id: show_only_unified_objects_checkbox
             disabled: True
+            active: False
             on_active: root._show_only_unified_objects_checkbox_on_state_change()
         ScrollView:
           Label:
@@ -117,10 +118,10 @@
       BoxLayout:
         orientation: 'vertical'
         Label:
-          text: 'Video Duration [s]'
+          text: 'Video Duration [frames]'
         TextInput:
           id: video_duration_text_input
-          text: '3'
+          text: '40'
           disabled: True
           input_filter: 'int'
       BoxLayout:
@@ -129,7 +130,7 @@
           text: 'Distance [cm]'
         TextInput:
           id: distance_text_input
-          text: '20'
+          text: '40'
           input_filter: 'int'
       BoxLayout:
         orientation: 'vertical'

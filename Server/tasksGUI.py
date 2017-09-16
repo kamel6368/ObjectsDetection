@@ -2,7 +2,13 @@ import numpy as np
 from kivy.clock import mainthread
 
 import tasks
+import converter
 from Common.TCPConnections import StreamMode
+
+
+###################################
+# callbacks
+###################################
 
 
 def image_mode_spinner_on_text(main_layout, mode):
@@ -28,15 +34,60 @@ def start_stop_stream_button_on_press(main):
         tasks.start_stream(main, main.tcp_client, main.main_layout)
 
 
+def stream_mode_button_on_text(main, main_layout, show_only_unified_objects):
+    tasks.change_stream_mode(main)
+    update_gui_after_stream_mode_switch(main, main_layout, show_only_unified_objects)
+
+
+@mainthread
+def previous_frame_button_on_press(main, main_layout, show_only_unified_objects):
+    buffer = determine_buffer_for_switching_frames(main)
+    current_index = determine_current_index_for_switching_frames(main)
+    current_index -= 1
+    update_next_and_previous_frame_buttons(main_layout, buffer, current_index)
+    update_current_index(main, current_index)
+    update_gui_after_user_switched_frame(main_layout, buffer, current_index, show_only_unified_objects)
+
+
+@mainthread
+def next_frame_button_on_press(main, main_layout, show_only_unified_objects):
+    buffer = determine_buffer_for_switching_frames(main)
+    current_index = determine_current_index_for_switching_frames(main)
+    current_index += 1
+    update_next_and_previous_frame_buttons(main_layout, buffer, current_index)
+    update_current_index(main, current_index)
+    update_gui_after_user_switched_frame(main_layout, buffer, current_index, show_only_unified_objects)
+
+
+def show_only_unified_objects_checkbox_on_state_change(main, main_layout, is_active):
+    if is_active:
+        objects_str = converter.list_of_objects_with_certainty_factor_to_string(main.unified_objects)
+        main_layout.print_on_console(objects_str)
+    elif main.stream_mode == StreamMode.EACH_FRAME:
+        print_objects_on_console(main_layout, main.frames_buffer, main.current_frame_index)
+    elif main.stream_mode == StreamMode.VIDEO:
+        print_objects_on_console(main_layout, main.video_buffer, main.current_video_index)
+
+
+@mainthread
+def show_settings_view(screen_manager):
+    screen_manager.transition.direction = 'left'
+    screen_manager.current = 'SettingsScreen'
+
+################################
+# custom GUI tasks
+################################
+
+
 @mainthread
 def update_raw_image(main_layout, image):
-    image = tasks.convert_cv2_image_to_kivy_texture(image)
+    image = converter.convert_cv2_image_to_kivy_texture(image)
     main_layout.update_raw_image_texture(image)
 
 
 @mainthread
 def update_quantization_image(main_layout, quantized_image):
-    quantized_image = tasks.convert_cv2_image_to_kivy_texture(quantized_image)
+    quantized_image = converter.convert_cv2_image_to_kivy_texture(quantized_image)
     main_layout.update_quantized_image_texture(quantized_image)
 
 
@@ -79,11 +130,8 @@ def update_gui_after_stream_off(main, main_layout, enable_frames_switching):
         main_layout.enable_apply_quantization_checkbox()
         main_layout.enable_video_duration_text_input()
         main_layout.enable_show_only_unified_objects_checkbox()
-
-
-def stream_mode_button_on_text(main, main_layout, show_only_unified_objects):
-    tasks.change_stream_mode(main)
-    update_gui_after_stream_mode_switch(main, main_layout, show_only_unified_objects)
+        main_layout.enable_stream_button()
+        main_layout.deactivate_show_only_unified_objects_checkbox()
 
 
 def update_gui_after_video_done_recording(main_layout):
@@ -92,26 +140,6 @@ def update_gui_after_video_done_recording(main_layout):
 
 def print_on_console(main_layout, text):
     main_layout.print_on_console(text)
-
-
-@mainthread
-def previous_frame_button_on_press(main, main_layout, show_only_unified_objects):
-    buffer = determine_buffer_for_switching_frames(main)
-    current_index = determine_current_index_for_switching_frames(main)
-    current_index -= 1
-    update_next_and_previous_frame_buttons(main_layout, buffer, current_index)
-    update_current_index(main, current_index)
-    update_gui_after_user_switched_frame(main_layout, buffer, current_index, show_only_unified_objects)
-
-
-@mainthread
-def next_frame_button_on_press(main, main_layout, show_only_unified_objects):
-    buffer = determine_buffer_for_switching_frames(main)
-    current_index = determine_current_index_for_switching_frames(main)
-    current_index += 1
-    update_next_and_previous_frame_buttons(main_layout, buffer, current_index)
-    update_current_index(main, current_index)
-    update_gui_after_user_switched_frame(main_layout, buffer, current_index, show_only_unified_objects)
 
 
 def update_next_and_previous_frame_buttons(main_layout, buffer, current_index):
@@ -159,12 +187,12 @@ def update_gui_after_user_switched_frame(main_layout, buffer, current_index, sho
     triple = buffer[current_index]
 
     if isinstance(triple[0], np.ndarray):
-        image = triple[0] = tasks.convert_cv2_image_to_kivy_texture(triple[0])
+        image = triple[0] = converter.convert_cv2_image_to_kivy_texture(triple[0])
     else:
         image = triple[0]
 
     if isinstance(triple[1], np.ndarray):
-        quantization_image = triple[1] = tasks.convert_cv2_image_to_kivy_texture(triple[1])
+        quantization_image = triple[1] = converter.convert_cv2_image_to_kivy_texture(triple[1])
     else:
         quantization_image = triple[1]
 
@@ -180,16 +208,6 @@ def update_gui_after_user_switched_frame(main_layout, buffer, current_index, sho
 
 def print_objects_on_console(main_layout, buffer, current_index):
     main_layout.print_on_console(buffer[current_index][2])
-
-
-def show_only_unified_objects_checkbox_on_state_change(main, main_layout, is_active):
-    if is_active:
-        objects_str = tasks.list_of_objects_with_certainty_factor_to_string(main.unified_objects)
-        main_layout.print_on_console(objects_str)
-    elif main.stream_mode == StreamMode.EACH_FRAME:
-        print_objects_on_console(main_layout, main.frames_buffer, main.current_frame_index)
-    elif main.stream_mode == StreamMode.VIDEO:
-        print_objects_on_console(main_layout, main.video_buffer, main.current_video_index)
 
 
 def update_gui_after_stream_mode_switch(main, main_layout, show_only_unified_objects):
@@ -219,12 +237,6 @@ def set_raw_image_to_no_content(main_layout):
 
 def no_content_image_path():
     return 'Resources/no_image.jpg'
-
-
-@mainthread
-def show_settings_view(screen_manager):
-    screen_manager.transition.direction = 'left'
-    screen_manager.current = 'SettingsScreen'
 
 
 def get_distance(main_layout):

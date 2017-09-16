@@ -4,13 +4,12 @@ from kivy.app import App
 from kivy.lang.builder import Builder
 from kivy.uix.screenmanager import ScreenManager
 
+import Common.config as config
 import configurable_objects_factory
 import tasks
-import Common.config as config
-from Common.Logger import Logger
 from Common.TCPConnections import StreamMode
-from MainLayout import MainLayout
-from SettingsLayout import SettingsLayout
+from Server.Layouts.MainLayout import MainLayout
+from Server.Layouts.SettingsLayout import SettingsLayout
 
 
 class MyApp(App):
@@ -37,7 +36,7 @@ class MyApp(App):
         App.__init__(self)
 
     def build(self):
-        Builder.load_file('Layouts/main_layout.kv')
+        Builder.load_file('Layouts/Views/main_layout.kv')
         self.screen_manager = ScreenManager()
         self.main_layout = MainLayout(self, name='MainScreen')
         settings_layout = SettingsLayout(self.screen_manager, self, name='SettingsScreen')

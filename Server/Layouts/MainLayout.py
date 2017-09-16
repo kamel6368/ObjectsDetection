@@ -1,5 +1,5 @@
-import tasks
-import tasksGUI
+import Server.tasks
+import Server.tasksGUI
 from kivy.uix.screenmanager import Screen
 
 
@@ -11,7 +11,6 @@ class MainLayout(Screen):
     def __init__(self, main, name=None):
         super(MainLayout, self).__init__(name=name)
         self.main = main
-        # self.show_raw_image(self.main.gui_images[0])
 
     ############################################
     # callable functions
@@ -117,36 +116,39 @@ class MainLayout(Screen):
     def disable_settings_button(self):
         self.ids.settings_button.disabled = True
 
+    def deactivate_show_only_unified_objects_checkbox(self):
+        self.ids.show_only_unified_objects_checkbox.active = False
+
     ############################################
     # buttons callbacks
     ############################################
 
     def _image_mode_spinner_on_text(self):
-        tasksGUI.image_mode_spinner_on_text(self.main.main_layout, self.ids.image_mode_spinner.text)
+        Server.tasksGUI.image_mode_spinner_on_text(self.main.main_layout, self.ids.image_mode_spinner.text)
 
     def _start_shutdown_agent_button_pressed(self):
-        tasksGUI.start_shutdown_agent_button_pressed(self.main)
+        Server.tasksGUI.start_shutdown_agent_button_pressed(self.main)
 
     def _start_stop_stream_button_on_press(self):
-        tasksGUI.start_stop_stream_button_on_press(self.main)
+        Server.tasksGUI.start_stop_stream_button_on_press(self.main)
 
     def _apply_quantization_checkbox_on_state_change(self):
-        tasks.change_quantization_state(self.main, self.ids.apply_quantization_checkbox.active)
+        Server.tasks.change_quantization_state(self.main, self.ids.apply_quantization_checkbox.active)
 
     def _stream_mode_button_on_text(self):
-        tasksGUI.stream_mode_button_on_text(self.main, self, self.ids.show_only_unified_objects_checkbox.active)
+        Server.tasksGUI.stream_mode_button_on_text(self.main, self, self.ids.show_only_unified_objects_checkbox.active)
 
     def _previous_frame_button_on_press(self):
-        tasksGUI.previous_frame_button_on_press(self.main, self.main.main_layout,
+        Server.tasksGUI.previous_frame_button_on_press(self.main, self.main.main_layout,
                                                        self.ids.show_only_unified_objects_checkbox.active)
 
     def _next_frame_button_on_press(self):
-        tasksGUI.next_frame_button_on_press(self.main, self.main.main_layout,
+        Server.tasksGUI.next_frame_button_on_press(self.main, self.main.main_layout,
                                                    self.ids.show_only_unified_objects_checkbox.active)
 
     def _show_only_unified_objects_checkbox_on_state_change(self):
-        tasksGUI.show_only_unified_objects_checkbox_on_state_change(self.main, self.main.main_layout,
+        Server.tasksGUI.show_only_unified_objects_checkbox_on_state_change(self.main, self.main.main_layout,
                                                                            self.ids.show_only_unified_objects_checkbox.active)
 
     def _settings_button_on_press(self):
-        tasksGUI.show_settings_view(self.main.screen_manager)
+        Server.tasksGUI.show_settings_view(self.main.screen_manager)

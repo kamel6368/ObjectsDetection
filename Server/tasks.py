@@ -1,9 +1,8 @@
 import cv2
 import tasksGUI
-import threading
+import converter
 from Common.serialization import serialize_list_of_objects
 from DataModel.enums import Color
-from kivy.graphics.texture import Texture
 from Common.TCPConnections import TCPCommands, StreamMode
 
 
@@ -23,14 +22,6 @@ def acknowledge_agent_registration(main, tcp_client):
 def send_detected_object_to_agent(objects, tcp_client):
     content = serialize_list_of_objects(objects)
     tcp_client.send(TCPCommands.OBJECTS, content)
-
-
-def convert_cv2_image_to_kivy_texture(frame):
-    buf1 = cv2.flip(frame, 0)
-    buf = buf1.tostring()
-    image_texture = Texture.create(size=(frame.shape[1], frame.shape[0]), colorfmt='bgr')
-    image_texture.blit_buffer(buf, colorfmt='bgr', bufferfmt='ubyte')
-    return image_texture
 
 
 def start_agent():
@@ -104,7 +95,7 @@ def change_stream_mode(main):
 def image_action_stream_mode_each_frame(main, tcp_client, image, real_distance):
     quantizied_image = None
     if main.apply_quantization:
-        quantizied_image = main.object_detector._prepare_image_for_detection(image)
+        quantizied_image = main.object_detector.prepare_image_for_detection(image)
 
     objects = detect_objects(main.object_detector, image, quantizied_image, real_distance)
     draw_contours_on_image(main.object_detector, image)
@@ -112,7 +103,7 @@ def image_action_stream_mode_each_frame(main, tcp_client, image, real_distance):
         draw_contours_on_image(main.object_detector, quantizied_image)
         tasksGUI.update_quantization_image(main.main_layout, quantizied_image)
     tasksGUI.update_raw_image(main.main_layout, image)
-    objects_string = list_of_objects_to_string(objects)
+    objects_string = converter.list_of_objects_to_string(objects)
     tasksGUI.print_on_console(main.main_layout, objects_string)
     main.frames_buffer.append([image, quantizied_image, objects_string])
     main.object_detector.clear_contours()
@@ -124,23 +115,6 @@ def image_action_stream_mode_video(image, video_buffer, main_layout):
     tasksGUI.update_raw_image(main_layout, image)
 
 
-def list_of_objects_to_string(objects):
-    result = ''
-    for object in objects:
-        result += object.to_string().replace('\t', '    ') + '\n\n'
-    return result
-
-
-def list_of_objects_with_certainty_factor_to_string(objects):
-    result = ''
-    for tuple in objects:
-        object_str = tuple[0].to_string().replace('\t', '    ')
-        temp = object_str.split('\n')
-        temp[0] += '    (Certainty Factor: ' + str(tuple[1]) + ')'
-        result += '\n'.join(temp) + '\n\n'
-    return result
-
-
 def extract_objects_from_video(video_buffer, apply_quantization, object_detector, objects_unificator,
                                main, main_layout):
     objects_each_frame = []
@@ -148,7 +122,7 @@ def extract_objects_from_video(video_buffer, apply_quantization, object_detector
         raw_frame = video_buffer[frame_index]
         quantizied_frame = None
         if apply_quantization:
-            quantizied_frame = object_detector._prepare_image_for_detection(raw_frame)
+            quantizied_frame = object_detector.prepare_image_for_detection(raw_frame)
 
         real_distance = tasksGUI.get_distance(main_layout)
         detected_objects = detect_objects(object_detector, raw_frame, quantizied_frame, real_distance)
@@ -157,7 +131,7 @@ def extract_objects_from_video(video_buffer, apply_quantization, object_detector
         if quantizied_frame is not None:
             draw_contours_on_image(object_detector, quantizied_frame)
 
-        objects_str = list_of_objects_to_string(detected_objects)
+        objects_str = converter.list_of_objects_to_string(detected_objects)
         main.video_buffer[frame_index] = [raw_frame, quantizied_frame, objects_str]
 
         tasksGUI.update_raw_image(main_layout, raw_frame)
