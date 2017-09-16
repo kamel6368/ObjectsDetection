@@ -15,4 +15,3 @@ echo cd ObjectsDetectionApp ^& start python run.py >> run_server.bat
 mkdir Logs
 
 echo DONE
-pause

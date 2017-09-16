@@ -22,4 +22,3 @@ cd Deploy
 plink -ssh %raspberry_user%@%raspberry_ip% -pw %raspberry_password% -m RaspberryScripts/raspberry_deploy_script.txt
 
 echo DONE
-pause

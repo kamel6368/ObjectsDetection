@@ -12,4 +12,3 @@ for /f "tokens=1,2 delims==" %%a in (RaspberryScripts/raspberry_params.txt) do (
 plink -ssh %raspberry_user%@%raspberry_ip% -pw %raspberry_password% -m RaspberryScripts/raspberry_packages_list.txt
 
 echo DONE
-pause

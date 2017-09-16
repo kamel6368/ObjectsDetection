@@ -1,1 +1,3 @@
-python Server.run.py 
+call install_packages_server.bat
+call deploy_server.bat
+pause

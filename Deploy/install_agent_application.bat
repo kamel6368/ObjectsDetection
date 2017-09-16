@@ -1,1 +1,3 @@
-python Server.run.py 
+call install_packages_raspberry.bat
+call deploy_to_raspberry.bat
+pause

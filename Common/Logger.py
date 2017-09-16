@@ -10,14 +10,14 @@ class Logger:
         self.logs_path = logs_path
 
     def print_msg(self, message):
+        if len(message) > 100:
+            message = message[:100]
         message = Logger._append_time_to_message(message)
         if self.file_print:
             file_name = Logger._assume_file_name()
             self._print_to_file(message, file_name, self.logs_path)
 
         if self.console_print:
-            if len(message) > 100:
-                message = message[:100]
             print message
 
     @staticmethod
