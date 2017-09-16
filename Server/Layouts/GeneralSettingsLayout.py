@@ -24,6 +24,9 @@ class GeneralSettingsLayout(ScrollView):
 
         self.ids.frames_buffer_size_form.value = str(yaml['General']['frames_buffer_size'])
 
+        self.ids.username_form.value = str(yaml['SSHConnection']['username'])
+        self.ids.password_form.value = str(yaml['SSHConnection']['password'])
+
     def create_yaml(self):
         return {
             'TCPConnection': {
@@ -40,6 +43,10 @@ class GeneralSettingsLayout(ScrollView):
                 'logs_path': self.ids.logs_path_form.value
             },
             'General': {
-                'frames_buffer_size': self.ids.frames_buffer_size_form.value
+                'frames_buffer_size': int(self.ids.frames_buffer_size_form.value)
+            },
+            'SSHConnection': {
+                'username': self.ids.username_form.value,
+                'password': self.ids.password_form.value
             }
         }

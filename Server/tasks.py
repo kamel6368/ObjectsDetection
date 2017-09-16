@@ -1,6 +1,7 @@
 import cv2
 import tasksGUI
 import converter
+from threading import Thread
 from Common.serialization import serialize_list_of_objects
 from DataModel.enums import Color
 from Common.TCPConnections import TCPCommands, StreamMode
@@ -24,8 +25,12 @@ def send_detected_object_to_agent(objects, tcp_client):
     tcp_client.send(TCPCommands.OBJECTS, content)
 
 
-def start_agent():
-    pass
+def start_agent(main, logger):
+    logger.print_msg('Attempting to start agent application...')
+    main.start_agent_thread = Thread(target=main.ssh_client.exec_command,
+                                     args=('./run.sh',))
+    main.start_agent_thread.start()
+    logger.print_msg('Agent application started')
 
 
 def shutdown_agent(tcp_client):

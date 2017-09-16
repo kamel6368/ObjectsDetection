@@ -24,7 +24,7 @@ def start_shutdown_agent_button_pressed(main):
     if main.is_agent_alive:
         tasks.shutdown_agent(main.tcp_client)
     else:
-        tasks.start_agent()
+        tasks.start_agent(main, main.logger)
 
 
 def start_stop_stream_button_on_press(main):
@@ -115,6 +115,7 @@ def update_gui_after_stream_on(main, main_layout):
     main_layout.disable_previous_frame_button()
     main_layout.disable_settings_button()
     main_layout.disable_distance_text_input()
+    main_layout.disable_start_shutdown_agent_button()
 
 
 def update_gui_after_stream_off(main, main_layout, enable_frames_switching):
@@ -122,6 +123,7 @@ def update_gui_after_stream_off(main, main_layout, enable_frames_switching):
     main_layout.enable_stream_mode_spinner()
     main_layout.enable_settings_button()
     main_layout.enable_distance_text_input()
+    main_layout.enable_start_shutdown_agent_button()
 
     if enable_frames_switching:
         main_layout.enable_previous_frame_button()

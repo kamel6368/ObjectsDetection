@@ -1,3 +1,7 @@
 from MyApp import MyApp
 
-MyApp().run()
+main = MyApp()
+try:
+    main.run()
+except Exception as e:
+    print e.message

@@ -1,3 +1,12 @@
+General:
+  frames_buffer_size: 10
+Logger:
+  console_print: true
+  file_print: false
+  logs_path: Logs\
+SSHConnection:
+  password: raspberry
+  username: pi
 TCPConnection:
   agent_address: 192.168.0.25
   agent_port: 23507
@@ -5,11 +14,3 @@ TCPConnection:
   receive_address: 192.168.0.24
   receive_port: 23506
   socket_timeout: 3.0
-
-Logger:
-  console_print: True
-  file_print: False
-  logs_path: 'Logs\'
-
-General:
-  frames_buffer_size: 10

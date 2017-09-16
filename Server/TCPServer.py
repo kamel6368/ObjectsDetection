@@ -1,6 +1,5 @@
 import tasks
 import tasksGUI
-from collections import deque
 from Common.serialization import image_from_string
 from Common.TCPConnections import TCPServer as CommonTCPServer, TCPCommands, StreamMode
 

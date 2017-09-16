@@ -12,6 +12,7 @@
 
 <Form@BoxLayout>:
   text: ''
+  password: False
   value: input.text
   orientation: 'horizontal'
   size_hint: None, 1
@@ -24,5 +25,6 @@
   TextInput:
     id: input
     text: root.value
+    password: root.password
     height: dp(30)
     size_hint_y: None

@@ -75,3 +75,22 @@
         Form:
           id: logs_path_form
           text: 'Logs path'
+
+
+    BoxLayout:
+      orientation: 'vertical'
+      size_hint_y: None
+      height: 125
+      Label:
+        text: 'SSH connection'
+        size_hint: 1, None
+        height: 20
+      AnchorLayout:
+        Form:
+          id: username_form
+          text: 'User name'
+      AnchorLayout:
+        Form:
+          id: password_form
+          password: True
+          text: 'Password'

@@ -46,6 +46,7 @@ class TCPServer(Thread):
 
     def __init__(self, address, port, buffer_size, socket_timeout, logger):
         Thread.__init__(self)
+        self.name = 'TCPServer'
         self.address = address
         self.port = port
         self.buffer_size = buffer_size

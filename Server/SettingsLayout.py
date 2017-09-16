@@ -1,13 +1,13 @@
 import ImageProcessing.parameters_loader as img_proc_param_loader
 import ObjectsUnification.parameters_loader as unif_param_loader
 import Common.config as general_param_loader
-import Server.configurable_objects_factory
+import configurable_objects_factory
 from kivy.uix.screenmanager import Screen
 from kivy.uix.popup import Popup
 from kivy.uix.label import Label
-from GeneralSettingsLayout import GeneralSettingsLayout
-from ImageProcessingSettingsLayout import ImageProcessingSettingsLayout
-from UnificationSettingsLayout import UnificationSettingsLayout
+from Layouts.GeneralSettingsLayout import GeneralSettingsLayout
+from Layouts.ImageProcessingSettingsLayout import ImageProcessingSettingsLayout
+from Layouts.UnificationSettingsLayout import UnificationSettingsLayout
 
 
 class SettingsLayout(Screen):
@@ -53,11 +53,11 @@ class SettingsLayout(Screen):
         try:
             if isinstance(self.current_settings, ImageProcessingSettingsLayout):
                 img_proc_param_loader.save_yaml_to_file(self.current_settings.create_yaml())
-                self.main.object_detector = Server.configurable_objects_factory.create_object_detector()
+                self.main.object_detector = configurable_objects_factory.create_object_detector()
                 self._show_saved_popup()
             elif isinstance(self.current_settings, UnificationSettingsLayout):
                 unif_param_loader.save_yaml_to_file(self.current_settings.create_yaml())
-                self.main.objects_unificator = Server.configurable_objects_factory.create_objects_unificator()
+                self.main.objects_unificator = configurable_objects_factory.create_objects_unificator()
                 self._show_saved_popup()
             elif isinstance(self.current_settings, GeneralSettingsLayout):
                 general_param_loader.save_yaml_to_file(self.current_settings.create_yaml())

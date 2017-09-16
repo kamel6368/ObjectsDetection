@@ -8,8 +8,8 @@ import Common.config as config
 import configurable_objects_factory
 import tasks
 from Common.TCPConnections import StreamMode
-from Server.Layouts.MainLayout import MainLayout
-from Server.Layouts.SettingsLayout import SettingsLayout
+from MainLayout import MainLayout
+from SettingsLayout import SettingsLayout
 
 
 class MyApp(App):
@@ -33,6 +33,7 @@ class MyApp(App):
         self.current_video_index = -1
         self.objects_unificator = None
         self.unified_objects = None
+        self.ssh_client = None
         App.__init__(self)
 
     def build(self):
@@ -47,6 +48,8 @@ class MyApp(App):
     def on_start(self):
         self._load_app_config()
         self.logger = configurable_objects_factory.create_logger()
+
+        self.ssh_client = configurable_objects_factory.create_ssh_client()
 
         self.tcp_client = configurable_objects_factory.create_tcp_client(self.logger)
         tasks.try_reconnect_to_alive_agents(self, self.tcp_client)
