@@ -1,12 +1,15 @@
 TCPConnection:
-  agent_address: 127.0.0.1
+  agent_address: 192.168.0.25
   agent_port: 23507
-  receive_address: 127.0.0.1
-  receive_port: 23506
   buffer_size: 2048
+  receive_address: 192.168.0.24
+  receive_port: 23506
   socket_timeout: 3.0
 
 Logger:
   console_print: True
-  file_print: True
+  file_print: False
   logs_path: 'Logs\'
+
+General:
+  frames_buffer_size: 10

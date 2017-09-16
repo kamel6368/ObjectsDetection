@@ -40,3 +40,38 @@
         Form:
           id: socket_timeout_form
           text: 'Socket timeout'
+
+
+    BoxLayout:
+      orientation: 'vertical'
+      size_hint_y: None
+      height: 75
+      Label:
+        text: 'General'
+        size_hint: 1, None
+        height: 20
+      AnchorLayout:
+        Form:
+          id: frames_buffer_size_form
+          text: 'Frames buffer size'
+
+    BoxLayout:
+      orientation: 'vertical'
+      size_hint_y: None
+      height: 150
+      Label:
+        text: 'Logger'
+        size_hint: 1, None
+        height: 20
+      AnchorLayout:
+        Form:
+          id: console_print_form
+          text: 'Print on console'
+      AnchorLayout:
+        Form:
+          id: file_print_form
+          text: 'Print to file'
+      AnchorLayout:
+        Form:
+          id: logs_path_form
+          text: 'Logs path'

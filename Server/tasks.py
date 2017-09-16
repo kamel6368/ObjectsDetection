@@ -140,6 +140,7 @@ def list_of_objects_with_certainty_factor_to_string(objects):
         result += '\n'.join(temp) + '\n\n'
     return result
 
+
 def extract_objects_from_video(video_buffer, apply_quantization, object_detector, objects_unificator,
                                main, main_layout):
     objects_each_frame = []

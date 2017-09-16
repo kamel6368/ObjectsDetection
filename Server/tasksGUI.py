@@ -63,12 +63,14 @@ def update_gui_after_stream_on(main, main_layout):
     main_layout.disable_next_frame_button()
     main_layout.disable_previous_frame_button()
     main_layout.disable_settings_button()
+    main_layout.disable_distance_text_input()
 
 
 def update_gui_after_stream_off(main, main_layout, enable_frames_switching):
     main_layout.change_start_stop_stream_button_text('Start stream')
     main_layout.enable_stream_mode_spinner()
     main_layout.enable_settings_button()
+    main_layout.enable_distance_text_input()
 
     if enable_frames_switching:
         main_layout.enable_previous_frame_button()
@@ -82,6 +84,10 @@ def update_gui_after_stream_off(main, main_layout, enable_frames_switching):
 def stream_mode_button_on_text(main, main_layout, show_only_unified_objects):
     tasks.change_stream_mode(main)
     update_gui_after_stream_mode_switch(main, main_layout, show_only_unified_objects)
+
+
+def update_gui_after_video_done_recording(main_layout):
+    main_layout.disable_stream_button()
 
 
 def print_on_console(main_layout, text):
@@ -222,4 +228,7 @@ def show_settings_view(screen_manager):
 
 
 def get_distance(main_layout):
-    return float(main_layout.get_distance())
+    dist_string = main_layout.get_distance()
+    if len(dist_string) == 0:
+        return 0.0
+    return float(dist_string)

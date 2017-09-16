@@ -6,6 +6,7 @@ from kivy.uix.screenmanager import ScreenManager
 
 import configurable_objects_factory
 import tasks
+import Common.config as config
 from Common.Logger import Logger
 from Common.TCPConnections import StreamMode
 from MainLayout import MainLayout
@@ -27,7 +28,7 @@ class MyApp(App):
         self.object_detector = None
         self.stream_mode = StreamMode.EACH_FRAME
         self.video_buffer = deque([])
-        self.frames_buffer_size = 10
+        self.frames_buffer_size = None
         self.frames_buffer = deque([], maxlen=self.frames_buffer_size)
         self.current_frame_index = -1
         self.current_video_index = -1
@@ -45,6 +46,7 @@ class MyApp(App):
         return self.screen_manager
 
     def on_start(self):
+        self._load_app_config()
         self.logger = configurable_objects_factory.create_logger()
 
         self.tcp_client = configurable_objects_factory.create_tcp_client(self.logger)
@@ -61,3 +63,7 @@ class MyApp(App):
     def restart_tcp_server(self):
         self.tcp_server = configurable_objects_factory.create_tcp_server(self, self.logger)
         self.tcp_server.start()
+
+    def _load_app_config(self):
+        configuration = config.get_yaml()
+        self.frames_buffer_size = configuration['General']['frames_buffer_size']

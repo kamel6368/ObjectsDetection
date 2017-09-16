@@ -52,9 +52,11 @@ class SettingsLayout(Screen):
             if isinstance(self.current_settings, ImageProcessingSettingsLayout):
                 img_proc_param_loader.save_yaml_to_file(self.current_settings.create_yaml())
                 self.main.object_detector = configurable_objects_factory.create_object_detector()
+                self._show_saved_popup()
             elif isinstance(self.current_settings, UnificationSettingsLayout):
                 unif_param_loader.save_yaml_to_file(self.current_settings.create_yaml())
                 self.main.objects_unificator = configurable_objects_factory.create_objects_unificator()
+                self._show_saved_popup()
             elif isinstance(self.current_settings, GeneralSettingsLayout):
                 general_param_loader.save_yaml_to_file(self.current_settings.create_yaml())
                 popup = Popup(title='Please restart application', content=Label(text='To apply changes please restart application'),
@@ -63,6 +65,13 @@ class SettingsLayout(Screen):
         except Exception as e:
             popup = Popup(title='Error',content=Label(text=e.message), size_hint=(None, None), size=(400, 400))
             popup.open()
+
+
+    def _show_saved_popup(self):
+        popup = Popup(title='Saved',
+                      content=Label(text='Saved'),
+                      size_hint=(None, None), size=(400, 400))
+        popup.open()
 
     def _set_to_default_button_on_press(self):
         if isinstance(self.current_settings, ImageProcessingSettingsLayout):
@@ -242,6 +251,12 @@ class GeneralSettingsLayout(ScrollView):
         self.ids.buffer_size_form.value = str(yaml['TCPConnection']['buffer_size'])
         self.ids.socket_timeout_form.value = str(yaml['TCPConnection']['socket_timeout'])
 
+        self.ids.console_print_form.value = str(yaml['Logger']['console_print'])
+        self.ids.file_print_form.value = str(yaml['Logger']['file_print'])
+        self.ids.logs_path_form.value = str(yaml['Logger']['logs_path'])
+
+        self.ids.frames_buffer_size_form.value = str(yaml['General']['frames_buffer_size'])
+
     def create_yaml(self):
         return {
             'TCPConnection': {
@@ -251,5 +266,13 @@ class GeneralSettingsLayout(ScrollView):
                 'receive_port': int(self.ids.receive_port_form.value),
                 'buffer_size': int(self.ids.buffer_size_form.value),
                 'socket_timeout': float(self.ids.socket_timeout_form.value)
+            },
+            'Logger': {
+                'console_print': True if self.ids.console_print_form.value == 'True' else False,
+                'file_print': True if self.ids.file_print_form.value == 'True' else False,
+                'logs_path': self.ids.logs_path_form.value
+            },
+            'General': {
+                'frames_buffer_size': self.ids.frames_buffer_size_form.value
             }
         }

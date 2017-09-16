@@ -68,6 +68,7 @@ class TCPServer(CommonTCPServer):
 
     def _video_done_recording_action(self):
         self.main.is_stream_on = False
+        tasksGUI.update_gui_after_video_done_recording(self.main.main_layout)
         tasks.extract_objects_from_video(self.main.video_buffer, self.main.apply_quantization,
                                          self.main.object_detector, self.main.objects_unificator, self.main,
                                          self.main.main_layout)
